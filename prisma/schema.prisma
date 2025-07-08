@@ -1,0 +1,57 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model Item {
+  id            Int           @id @default(autoincrement())
+  name          String
+  sku           String        @unique
+  stock         Int           @default(0)
+  buyPrice      Float         @default(0)
+  sellPrice     Float         @default(0)
+  categoryId    Int
+  category      Category      @relation(fields: [categoryId], references: [id])
+  transactions  Transaction[] // stok masuk / keluar
+  isActive      Boolean       @default(true)
+  createdById   Int?
+  createdBy     User?         @relation("ItemCreatedBy", fields: [createdById], references: [id])
+  updatedById   Int?
+  updatedBy     User?         @relation("ItemUpdatedBy", fields: [updatedById], references: [id])
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime      @updatedAt
+}
+
+model Category {
+  id        Int      @id @default(autoincrement())
+  name      String   @unique
+  items     Item[]
+  createdAt DateTime @default(now())
+}
+
+model Transaction {
+  id        Int       @id @default(autoincrement())
+  itemId    Int
+  item      Item      @relation(fields: [itemId], references: [id])
+  quantity  Int       // positif: masuk, negatif: keluar
+  type      TransactionType
+  note      String?
+  createdAt DateTime  @default(now())
+}
+
+enum TransactionType {
+  IN
+  OUT
+}
+
+model User {
+  id       Int     @id @default(autoincrement())
+  name     String
+  email    String  @unique
+  itemsCreated  Item[] @relation("ItemCreatedBy")
+  itemsUpdated  Item[] @relation("ItemUpdatedBy")
+}
