@@ -9,3 +9,39 @@ _StockFlow sangat cocok digunakan oleh berbagai jenis UMKM seperti toko kiloton,
 BERIKUT DOKUMENTASI LEBIH LANJUT TENTANG PROJECT:
 
 https://www.notion.so/StockFlow-Dokumentasi-Umum-Sistem-Manajemen-Stok-Budgeting-UMKM-224f6694a17c80719c59e5d94b918dc2?source=copy_link
+
+cara install :
+
+🔗 1. Clone Repositori dari GitHub
+Buka terminal dan jalankan:
+
+git clone https://github.com/szuryanailham/StokFlow-API.git
+cd StokFlow-API
+
+📦 2. Install Dependencies
+Pastikan kamu sudah menginstall Node.js dan npm.
+npm install
+
+⚙️ 3. Buat File .env
+Cek apakah project menggunakan .env.example atau langsung buat .env sendiri. Isi contoh konfigurasi .env seperti:
+DB_HOST=localhost
+DB_USER=root
+DB_PASSWORD=your_password
+DB_NAME=stokflow
+PORT=3000
+Catatan:
+
+Ganti your_password dengan password MySQL lokal kamu.
+
+Pastikan database stokflow sudah dibuat di MySQL kamu. Kalau belum, kamu bisa buat manual via phpMyAdmin atau CLI.
+
+🛠️ 4. Setup Database MySQL
+Cek apakah project ini menggunakan file SQL atau Sequelize migration.
+
+Jika tidak ada file migrasi otomatis, buat database secara manual:
+
+CREATE DATABASE stokflow;
+Lalu sesuaikan tabelnya (cek apakah ada model atau file .sql di folder project).
+
+▶️ 5. Jalankan Aplikasi
+npm run start
