@@ -1,47 +1,99 @@
-StockFlow – Dokumentasi Umum Sistem Manajemen Stok & Budgeting UMKM
+Berikut adalah versi **README.md** yang sudah diperbaiki dan dirapikan agar tampak lebih profesional dan mudah dibaca oleh developer lain:
 
-**StockFlow** adalah aplikasi yang dirancang khusus untuk membantu pelaku UMKM dalam mengelola persediaan barang dan mencatat penjualan secara efisien. Dengan fitur pencatatan stok dan pemantauan transaksi penjualan secara real-time, StockFlow memudahkan pengelolaan operasional harian usaha secara praktis dan terorganisir.
+---
 
-pencatatan :
+# 📦 StockFlow – Sistem Manajemen Stok & Budgeting untuk UMKM
 
-_StockFlow sangat cocok digunakan oleh berbagai jenis UMKM seperti toko kiloton, warung sembako, usaha kuliner, kedai kopi, toko pakaian, toko kosmetik lokal, pengrajin produk handmade, hingga pelaku usaha online seperti reseller dan dropshipper._
+**StockFlow** adalah aplikasi yang dirancang khusus untuk membantu pelaku **Usaha Mikro, Kecil, dan Menengah (UMKM)** dalam mengelola persediaan barang dan mencatat penjualan secara efisien. Dengan fitur pencatatan stok dan pemantauan transaksi penjualan secara real-time, StockFlow memudahkan pengelolaan operasional harian usaha secara praktis dan terorganisir.
 
-BERIKUT DOKUMENTASI LEBIH LANJUT TENTANG PROJECT:
+---
 
-https://www.notion.so/StockFlow-Dokumentasi-Umum-Sistem-Manajemen-Stok-Budgeting-UMKM-224f6694a17c80719c59e5d94b918dc2?source=copy_link
+## 🛍️ Cocok Untuk Jenis UMKM Berikut:
 
-cara install :
+- Toko kelontong
+- Warung sembako
+- Usaha kuliner & kedai kopi
+- Toko pakaian
+- Toko kosmetik lokal
+- Pengrajin produk handmade
+- Pelaku usaha online seperti reseller dan dropshipper
 
-🔗 1. Clone Repositori dari GitHub
-Buka terminal dan jalankan:
+---
 
+## 📚 Dokumentasi Lengkap
+
+👉 [Klik di sini untuk membuka dokumentasi lengkap di Notion](https://www.notion.so/StockFlow-Dokumentasi-Umum-Sistem-Manajemen-Stok-Budgeting-UMKM-224f6694a17c80719c59e5d94b918dc2?source=copy_link)
+
+---
+
+## 🚀 Cara Instalasi Aplikasi
+
+### 1. Clone Repositori dari GitHub
+
+```bash
 git clone https://github.com/szuryanailham/StokFlow-API.git
 cd StokFlow-API
+```
 
-📦 2. Install Dependencies
-Pastikan kamu sudah menginstall Node.js dan npm.
+### 2. Install Dependencies
+
+Pastikan kamu telah menginstal **Node.js** dan **npm**.
+
+```bash
 npm install
+```
 
-⚙️ 3. Buat File .env
-Cek apakah project menggunakan .env.example atau langsung buat .env sendiri. Isi contoh konfigurasi .env seperti:
+### 3. Konfigurasi Environment
+
+Buat file `.env` di root folder atau salin dari `.env.example` jika tersedia. Isi konfigurasi seperti berikut:
+
+```env
 DB_HOST=localhost
 DB_USER=root
 DB_PASSWORD=your_password
 DB_NAME=stokflow
 PORT=3000
-Catatan:
+```
 
-Ganti your_password dengan password MySQL lokal kamu.
+> 📝 **Catatan:**
+> Ganti `your_password` dengan password MySQL kamu.
+> Pastikan database `stokflow` sudah dibuat sebelumnya di MySQL (bisa via phpMyAdmin atau CLI).
 
-Pastikan database stokflow sudah dibuat di MySQL kamu. Kalau belum, kamu bisa buat manual via phpMyAdmin atau CLI.
+### 4. Setup Database MySQL
 
-🛠️ 4. Setup Database MySQL
-Cek apakah project ini menggunakan file SQL atau Sequelize migration.
+Jika project tidak menggunakan migrasi otomatis (seperti Sequelize), buat database secara manual:
 
-Jika tidak ada file migrasi otomatis, buat database secara manual:
-
+```sql
 CREATE DATABASE stokflow;
-Lalu sesuaikan tabelnya (cek apakah ada model atau file .sql di folder project).
+```
 
-▶️ 5. Jalankan Aplikasi
+> ⚠️ Periksa apakah terdapat file migrasi atau file `.sql` di dalam folder project untuk membuat struktur tabel.
+
+### 5. Menjalankan Aplikasi
+
+```bash
 npm run start
+```
+
+---
+
+## 💻 Teknologi yang Digunakan
+
+- **Node.js**
+- **Express.js**
+- **MySQL**
+- **Sequelize** (jika tersedia)
+
+---
+
+## 🤝 Kontribusi
+
+Kontribusi sangat terbuka! Jika kamu menemukan bug atau ingin menambahkan fitur baru, silakan buat pull request atau buka issue.
+
+---
+
+## 🧑‍💻 Developer
+
+Ilham Suryana – [GitHub](https://github.com/szuryanailham)
+
+---
