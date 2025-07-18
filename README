@@ -1,0 +1,133 @@
+Tentu, Ilham! Berikut versi **telah diperbaiki dan dirapikan** dari README setup environment **Express + Node.js** untuk project API `stokflow`:
+
+---
+
+## 🚀 Express + Node.js API Setup Guide (Stokflow)
+
+This guide provides a step-by-step setup of the Express.js environment to build an API for the **Stokflow** project. It includes validation setup, database connection, migration management, logging, encryption, session handling, and testing setup.
+
+---
+
+### 1. **Initialize Node.js Project**
+
+```bash
+mkdir stokflow-api
+cd stokflow-api
+npm init -y
+```
+
+Edit `package.json` as needed:
+
+```json
+"main": "src/main.js",
+"scripts": {
+  "test": "jest -i"
+},
+"author": "ilhamsuryana",
+"license": "ISC"
+```
+
+---
+
+### 2. **Install Joi for Request Validation**
+
+```bash
+npm install joi
+```
+
+---
+
+### 3. **Install Express & Type Definitions**
+
+```bash
+npm install express
+npm install --save-dev @types/express
+```
+
+---
+
+### 4. **Install Prisma for Database & Migration Management**
+
+```bash
+npm install --save-dev prisma
+```
+
+> You can initialize Prisma with:
+
+```bash
+npx prisma init
+```
+
+---
+
+### 5. **Install Winston for Logging**
+
+```bash
+npm install winston
+```
+
+---
+
+### 6. **Install Bcrypt for Password Hashing**
+
+```bash
+npm install bcrypt
+npm install --save-dev @types/bcrypt
+```
+
+---
+
+### 7. **Install UUID for Generating Unique Tokens**
+
+```bash
+npm install uuid
+npm install --save-dev @types/uuid
+```
+
+---
+
+### 8. **Install Jest for Unit Testing**
+
+```bash
+npm install --save-dev jest @types/jest
+```
+
+---
+
+### 9. **Install Babel for Jest with ES Modules**
+
+```bash
+npm install --save-dev babel-jest @babel/preset-env
+```
+
+Create a `.babelrc` file:
+
+```json
+{
+  "presets": ["@babel/preset-env"]
+}
+```
+
+---
+
+### 10. **Configure Jest in `package.json`**
+
+```json
+"jest": {
+  "transform": {
+    "^.+\\.[t|j]sx?$": "babel-jest"
+  }
+}
+```
+
+---
+
+### 11. **Install Supertest for API Testing**
+
+```bash
+npm install --save-dev supertest @types/supertest
+```
+
+---
+
+Let me know if kamu butuh template file `src/main.js`, folder struktur, atau setup `.env`. Saya bisa bantu!
