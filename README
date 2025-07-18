@@ -1,7 +1,3 @@
-Tentu, Ilham! Berikut versi **telah diperbaiki dan dirapikan** dari README setup environment **Express + Node.js** untuk project API `stokflow`:
-
----
-
 ## 🚀 Express + Node.js API Setup Guide (Stokflow)
 
 This guide provides a step-by-step setup of the Express.js environment to build an API for the **Stokflow** project. It includes validation setup, database connection, migration management, logging, encryption, session handling, and testing setup.
