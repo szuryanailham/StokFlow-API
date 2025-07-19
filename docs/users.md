@@ -1,13 +1,20 @@
-# User API Specification
+Here's the **corrected and neatly formatted** version of your **User API Specification**:
 
-## Login User API
+---
 
-Endpoint : POST api/auth/login
+# **User API Specification**
 
-Description :
-This endpoint is used for the login process to validate users who want to access the application. The user sends a request containing their credentials to proceed
+---
 
-### Request Login API
+## 🔐 Login User API
+
+- **Endpoint**: `POST /api/auth/login`
+- **Description**:
+  This endpoint is used for the login process to validate users who want to access the application. The user sends a request containing their credentials.
+
+---
+
+### ✅ Request Body
 
 ```json
 {
@@ -16,9 +23,9 @@ This endpoint is used for the login process to validate users who want to access
 }
 ```
 
-### Response Login Sucess API
+---
 
-✅ 200 OK (Berhasil Login)
+### ✅ Response 200 - Login Successful
 
 ```json
 {
@@ -26,15 +33,15 @@ This endpoint is used for the login process to validate users who want to access
   "user": {
     "id": "1",
     "name": "Admin StokFlow",
-    "email": "admin@stokflow.com"
+    "email": "admin@stokflow.com",
     "role": "admin"
   }
 }
 ```
 
-### Response 401 Unauthorized (Login gagal)
+---
 
-❌ 401 Unauthorized (Login gagal)
+### ❌ Response 401 - Unauthorized (Invalid credentials)
 
 ```json
 {
@@ -42,9 +49,9 @@ This endpoint is used for the login process to validate users who want to access
 }
 ```
 
-### 500 Internal Server Error
+---
 
-❌ 500 Internal Server Error
+### ❌ Response 500 - Internal Server Error
 
 ```json
 {
@@ -52,28 +59,35 @@ This endpoint is used for the login process to validate users who want to access
 }
 ```
 
-### 🏷️ Tags: [Auth], [Login]
+---
 
-## Logout User API
+### 🏷️ Tags: `Auth`, `Login`
 
-Endpoint : POST api/auth/logout
+---
 
-Description :
-This endpoint is used to log user out from system in application , it validated the current session or token valudation
+## 🔓 Logout User API
 
-### Headers
+- **Endpoint**: `POST /api/auth/logout`
+- **Description**:
+  This endpoint is used to log the user out from the application by invalidating their current session or token.
 
-```http
+---
+
+### 🧾 Headers
+
+```
 Authorization: Bearer <your_token_here>
 ```
 
-### Request Body
+---
 
-No request body is required.
+### ✅ Request Body
 
-### Response Logout Success API
+_No request body required._
 
-✅ 200 OK (Berhasil Login)
+---
+
+### ✅ Response 200 - Logout Successful
 
 ```json
 {
@@ -81,19 +95,9 @@ No request body is required.
 }
 ```
 
-### Response Logout Failed API
+---
 
-❌ 401 Unauthorized
-
-```json
-{
-  "message": "Invalid or missing token"
-}
-```
-
-### Response Logout Failed API
-
-❌ 500 Internal Server Error
+### ❌ Response 401 - Unauthorized
 
 ```json
 {
@@ -101,12 +105,109 @@ No request body is required.
 }
 ```
 
-### Example with curl
+---
+
+### ❌ Response 500 - Internal Server Error
+
+```json
+{
+  "message": "Terjadi kesalahan server"
+}
+```
+
+---
+
+### 🧪 Example (cURL)
 
 ```bash
 curl -X POST http://localhost:3000/api/auth/logout \
   -H "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
-
 ```
 
-### 🏷️ Tags: [Auth], [Logout]
+---
+
+### 🏷️ Tags: `Auth`, `Logout`
+
+---
+
+## 🗑️ Delete Product By ID
+
+**Endpoint**: `DELETE /api/products/:id`
+
+**Description**:
+Delete a product from the database based on the provided product ID.
+
+---
+
+### 🔐 Authorization
+
+**Header Required**:
+
+```http
+Authorization: Bearer <your_token_here>
+```
+
+---
+
+### ✅ Success Response
+
+**200 OK**
+
+```json
+{
+  "message": "Product deleted successfully",
+  "data": {
+    "id": 12,
+    "sku": "SKU-2025-012",
+    "product_name": "Gaming Keyboard Mechanical RGB"
+  }
+}
+```
+
+---
+
+### ❌ Error Responses
+
+**400 Bad Request**
+
+```json
+{
+  "message": "Invalid product ID format"
+}
+```
+
+**401 Unauthorized**
+
+```json
+{
+  "message": "Unauthorized"
+}
+```
+
+**403 Forbidden**
+
+```json
+{
+  "message": "You do not have permission to delete this product"
+}
+```
+
+**404 Not Found**
+
+```json
+{
+  "message": "Product with ID 12 not found"
+}
+```
+
+**500 Internal Server Error**
+
+```json
+{
+  "message": "An unexpected error occurred while deleting the product"
+}
+```
+
+---
+
+### 🏷️ Tags: \[Products], \[Delete], \[Admin]
