@@ -63,7 +63,7 @@ This endpoint is used to log user out from system in application , it validated 
 
 ### Headers
 
-```json
+```http
 Authorization: Bearer <your_token_here>
 ```
 
@@ -79,9 +79,6 @@ No request body is required.
 {
   "message": "Logout successful"
 }
-
-### Response Logout Success API
-
 ```
 
 ### Response Logout Failed API
