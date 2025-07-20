@@ -1,129 +1,102 @@
-## 🚀 Express + Node.js API Setup Guide (Stokflow)
+## 🚀 Express + Node.js API Setup Guide (StockFlow)
 
-This guide provides a step-by-step setup of the Express.js environment to build an API for the **Stokflow** project. It includes validation setup, database connection, migration management, logging, encryption, session handling, and testing setup.
+**StockFlow** is a streamlined **web-based application** meticulously designed to simplify **stock management for Micro, Small, and Medium Enterprises (MSMEs)**. Forget the hassle of manual record-keeping—StockFlow empowers business owners and their teams with **real-time visibility and control** over their inventory, ensuring they never miss a sale due to unexpected stockouts.
+
+Built with the modern **MERN stack (Express.js, React, Node.js)** and a robust **MySQL** database using **Prisma ORM**, StockFlow offers a responsive and intuitive interface along with a high-performance backend. This provides a fast, secure, and user-friendly experience across all devices.
 
 ---
 
-### 1. **Initialize Node.js Project**
+### 🔑 Key Features
+
+- **Effortless Product Management**
+  Add, update, or delete product information with ease—your inventory stays accurate and always up-to-date.
+
+- **Smart Transaction Logging**
+  Seamlessly log incoming stock (purchases) and outgoing stock (sales). Each transaction auto-updates inventory levels instantly.
+
+- **Low Stock Alerts**
+  StockFlow tracks your inventory thresholds and sends alerts when stock is low—ensuring timely restocking and reducing potential losses.
+
+- **Insightful Sales Reports**
+  Generate weekly or monthly sales reports to understand product performance and customer buying trends.
+
+- **Secure Access Control**
+  Role-based access and JWT authentication ensure that only authorized users can manage inventory and transactions.
+
+---
+
+### 🧪 Testing
+
+Testing is implemented using:
+
+- [Jest](https://jestjs.io/): A delightful JavaScript Testing Framework with a focus on simplicity.
+- [Supertest](https://github.com/visionmedia/supertest): A Super-agent driven library for testing Node.js HTTP servers.
+
+These tools ensure your API endpoints are functioning reliably under all conditions.
+
+---
+
+### 📦 Installation Instructions
+
+1. **Clone the Repository**
+
+   ```bash
+   git clone https://github.com/your-username/stockflow-api.git
+   cd stockflow-api
+   ```
+
+2. **Install Dependencies**
+
+   ```bash
+   npm install
+   ```
+
+3. **Environment Configuration**
+   Create a `.env` file based on `.env.example`:
+
+   ```env
+   DATABASE_URL="mysql://user:password@localhost:3306/stockflow"
+   JWT_SECRET="your_jwt_secret"
+   PORT=3000
+   ```
+
+4. **Setup the Database using Prisma**
+
+   ```bash
+   npx prisma migrate dev --name init
+   npx prisma db seed
+   ```
+
+5. **Run the Server**
+
+   ```bash
+   npm run dev
+   ```
+
+---
+
+### 🧪 Run Tests
+
+To execute all test cases:
 
 ```bash
-mkdir stokflow-api
-cd stokflow-api
-npm init -y
+npm run test
 ```
 
-Edit `package.json` as needed:
-
-```json
-"main": "src/main.js",
-"scripts": {
-  "test": "jest -i"
-},
-"author": "ilhamsuryana",
-"license": "ISC"
-```
+This command will automatically run both **unit** and **integration** tests defined for all API endpoints.
 
 ---
 
-### 2. **Install Joi for Request Validation**
+### 📚 Documentation
 
-```bash
-npm install joi
-```
+- 📖 **General Documentation**:
+  [StockFlow General Documentation on Notion](https://www.notion.so/StockFlow-General-Documentation-of-MSME-Stock-Management-VERSION-1-0-224f6694a17c80719c59e5d94b918dc2?source=copy_link)
 
----
-
-### 3. **Install Express & Type Definitions**
-
-```bash
-npm install express
-npm install --save-dev @types/express
-```
+- 🗃️ **Prisma Schema Reference**:
+  [Prisma Documentation](https://www.prisma.io/docs/concepts/components/prisma-schema)
 
 ---
 
-### 4. **Install Prisma for Database & Migration Management**
+### 🎬 Demo Access
 
-```bash
-npm install --save-dev prisma
-```
-
-> You can initialize Prisma with:
-
-```bash
-npx prisma init
-```
-
----
-
-### 5. **Install Winston for Logging**
-
-```bash
-npm install winston
-```
-
----
-
-### 6. **Install Bcrypt for Password Hashing**
-
-```bash
-npm install bcrypt
-npm install --save-dev @types/bcrypt
-```
-
----
-
-### 7. **Install UUID for Generating Unique Tokens**
-
-```bash
-npm install uuid
-npm install --save-dev @types/uuid
-```
-
----
-
-### 8. **Install Jest for Unit Testing**
-
-```bash
-npm install --save-dev jest @types/jest
-```
-
----
-
-### 9. **Install Babel for Jest with ES Modules**
-
-```bash
-npm install --save-dev babel-jest @babel/preset-env
-```
-
-Create a `.babelrc` file:
-
-```json
-{
-  "presets": ["@babel/preset-env"]
-}
-```
-
----
-
-### 10. **Configure Jest in `package.json`**
-
-```json
-"jest": {
-  "transform": {
-    "^.+\\.[t|j]sx?$": "babel-jest"
-  }
-}
-```
-
----
-
-### 11. **Install Supertest for API Testing**
-
-```bash
-npm install --save-dev supertest @types/supertest
-```
-
----
-
-Let me know if kamu butuh template file `src/main.js`, folder struktur, atau setup `.env`. Saya bisa bantu!
+👉 **Demo Website**: -
