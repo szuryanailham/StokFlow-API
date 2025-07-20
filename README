@@ -1,56 +1,102 @@
-🚀 Express + Node.js API Setup Guide (StockFlow)
-StockFlow is a streamlined web-based application meticulously designed to simplify stock management for Micro, Small, and Medium Enterprises (MSMEs). Forget the hassle of manual record-keeping—StockFlow empowers business owners and their teams with real-time visibility and control over their inventory, ensuring they never miss a sale due to unexpected stockouts.
+## 🚀 Express + Node.js API Setup Guide (StockFlow)
 
-Built with the modern MERN stack (Express.js, React, Node.js) and a robust MySQL database using Prisma ORM, StockFlow offers a responsive and intuitive interface along with a high-performance backend. This provides a fast, secure, and user-friendly experience across all devices.
+**StockFlow** is a streamlined **web-based application** meticulously designed to simplify **stock management for Micro, Small, and Medium Enterprises (MSMEs)**. Forget the hassle of manual record-keeping—StockFlow empowers business owners and their teams with **real-time visibility and control** over their inventory, ensuring they never miss a sale due to unexpected stockouts.
 
-🔑 Key Features
-Effortless Product Management Add, update, or delete product information with ease—your inventory stays accurate and always up-to-date.
+Built with the modern **MERN stack (Express.js, React, Node.js)** and a robust **MySQL** database using **Prisma ORM**, StockFlow offers a responsive and intuitive interface along with a high-performance backend. This provides a fast, secure, and user-friendly experience across all devices.
 
-Smart Transaction Logging Seamlessly log incoming stock (purchases) and outgoing stock (sales). Each transaction auto-updates inventory levels instantly.
+---
 
-Low Stock Alerts StockFlow tracks your inventory thresholds and sends alerts when stock is low—ensuring timely restocking and reducing potential losses.
+### 🔑 Key Features
 
-Insightful Sales Reports Generate weekly or monthly sales reports to understand product performance and customer buying trends.
+- **Effortless Product Management**
+  Add, update, or delete product information with ease—your inventory stays accurate and always up-to-date.
 
-Secure Access Control Role-based access and JWT authentication ensure that only authorized users can manage inventory and transactions.
+- **Smart Transaction Logging**
+  Seamlessly log incoming stock (purchases) and outgoing stock (sales). Each transaction auto-updates inventory levels instantly.
 
-🧪 Testing
+- **Low Stock Alerts**
+  StockFlow tracks your inventory thresholds and sends alerts when stock is low—ensuring timely restocking and reducing potential losses.
+
+- **Insightful Sales Reports**
+  Generate weekly or monthly sales reports to understand product performance and customer buying trends.
+
+- **Secure Access Control**
+  Role-based access and JWT authentication ensure that only authorized users can manage inventory and transactions.
+
+---
+
+### 🧪 Testing
+
 Testing is implemented using:
 
-Jest: A delightful JavaScript Testing Framework with a focus on simplicity.
-Supertest: A Super-agent driven library for testing Node.js HTTP servers.
+- [Jest](https://jestjs.io/): A delightful JavaScript Testing Framework with a focus on simplicity.
+- [Supertest](https://github.com/visionmedia/supertest): A Super-agent driven library for testing Node.js HTTP servers.
+
 These tools ensure your API endpoints are functioning reliably under all conditions.
 
-📦 Installation Instructions
-Clone the Repository
+---
 
-git clone https://github.com/your-username/stockflow-api.git
-cd stockflow-api
-Install Dependencies
+### 📦 Installation Instructions
 
-npm install
-Environment Configuration Create a .env file based on .env.example:
+1. **Clone the Repository**
 
-DATABASE_URL="mysql://user:password@localhost:3306/stockflow"
-JWT_SECRET="your_jwt_secret"
-PORT=3000
-Setup the Database using Prisma
+   ```bash
+   git clone https://github.com/your-username/stockflow-api.git
+   cd stockflow-api
+   ```
 
-npx prisma migrate dev --name init
-npx prisma db seed
-Run the Server
+2. **Install Dependencies**
 
-npm run dev
-🧪 Run Tests
+   ```bash
+   npm install
+   ```
+
+3. **Environment Configuration**
+   Create a `.env` file based on `.env.example`:
+
+   ```env
+   DATABASE_URL="mysql://user:password@localhost:3306/stockflow"
+   JWT_SECRET="your_jwt_secret"
+   PORT=3000
+   ```
+
+4. **Setup the Database using Prisma**
+
+   ```bash
+   npx prisma migrate dev --name init
+   npx prisma db seed
+   ```
+
+5. **Run the Server**
+
+   ```bash
+   npm run dev
+   ```
+
+---
+
+### 🧪 Run Tests
+
 To execute all test cases:
 
+```bash
 npm run test
-This command will automatically run both unit and integration tests defined for all API endpoints.
+```
 
-📚 Documentation
-📖 General Documentation: StockFlow General Documentation on Notion
+This command will automatically run both **unit** and **integration** tests defined for all API endpoints.
 
-🗃️ Prisma Schema Reference: Prisma Documentation
+---
 
-🎬 Demo Access
-👉 Demo Website: -
+### 📚 Documentation
+
+- 📖 **General Documentation**:
+  [StockFlow General Documentation on Notion](https://www.notion.so/StockFlow-General-Documentation-of-MSME-Stock-Management-VERSION-1-0-224f6694a17c80719c59e5d94b918dc2?source=copy_link)
+
+- 🗃️ **Prisma Schema Reference**:
+  [Prisma Documentation](https://www.prisma.io/docs/concepts/components/prisma-schema)
+
+---
+
+### 🎬 Demo Access
+
+👉 **Demo Website**: -
