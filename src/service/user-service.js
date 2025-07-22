@@ -1,23 +1,50 @@
-import { PrismaClient } from "@prisma/client/extension";
-import { loginValidated } from "../validation/user-validation";
-import { validate } from "../validation/validation";
+import { prisma } from "../application/database.js";
+import { loginValidated } from "../validation/user-validation.js";
+import { validate } from "../validation/validation.js";
+import { ResponseError } from "../error/response-error.js";
+import { v4 as uuid } from "uuid";
+import bcrypt from "bcrypt";
+
 const login = async (request) => {
-  // Create a variable to match the validation result with the incoming request
   const validateLoginInput = validate(loginValidated, request);
-  // If the validation passes, query the database using Prisma to find the user based on the request
-  const user = await PrismaClient.user.findUnique({
+
+  const user = await prisma.user.findUnique({
     where: {
-      username: validateLoginInput.username,
+      email: validateLoginInput.email,
     },
     select: {
-      username: true,
+      email: true,
       password: true,
     },
   });
 
-  // If the user is not found, return an error using a function that provides a description and status code
   if (!user) {
+    throw new ResponseError(401, "Username or Password Wrong");
   }
-  // If the user is found, generate a token using UUID
-  // Update the user's login data in the database using Prisma and return the result
+
+  const isPasswordValid = await bcrypt.compare(validateLoginInput.password, user.password);
+
+  if (!isPasswordValid) {
+    throw new ResponseError(401, "Username or Password Wrong");
+  }
+
+  const token = uuid().toString();
+
+  const updatedUser = await prisma.user.update({
+    data: {
+      token: token,
+    },
+    where: {
+      email: user.email,
+    },
+    select: {
+      token: true,
+    },
+  });
+
+  return updatedUser;
+};
+
+export default {
+  login,
 };
