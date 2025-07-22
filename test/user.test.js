@@ -1,34 +1,63 @@
 import supertest from "supertest";
 import { web } from "../src/application/web.js";
-import { prisma } from "../src/application/database.js";
 
-describe("POST /api/users/login", () => {
-  beforeAll(async () => {
-    const hashedPassword = await bcrypt.hash("testpassword123", 10);
-    await prisma.user.create({
-      data: {
-        email: "admin@stokflow.com",
-        username: "admin",
-        passwordHash: hashedPassword,
-      },
-    });
+import { createTestUser, removeTestUser } from "./test-util.js";
+import { logger } from "../src/application/logging.js";
+
+describe("POST /api/users/login", function () {
+  beforeEach(async () => {
+    await createTestUser();
   });
 
-  afterAll(async () => {
-    await prisma.user.deleteMany({
-      where: { email: "admin@stokflow.com" },
-    });
-    await prisma.$disconnect();
+  afterEach(async () => {
+    await removeTestUser();
   });
 
-  it("should login user successfully", async () => {
-    const result = await supertest(web).post("/api/users/login").send({
-      email: "admin@stokflow.com",
-      password: "testpassword123",
+  // IF TESTING IS SUCCESFULLY ....
+  it("Should be able to login", async () => {
+    const response = await supertest(web).post("/api/users/login").send({
+      email: "test@example.com",
+      password: "rahasia",
     });
-    console.log(result.body);
-    expect(result.status).toBe(200);
-    expect(result.body.data.email).toBe("admin@stokflow.com");
-    expect(result.body.data.password).toBeUndefined();
+
+    logger.info(response.body);
+    expect(response.status).toBe(200);
+    expect(response.body.data.token).toBeDefined();
+    expect(response.body.data.token).not.toBe("test");
+  });
+
+  // IF TESTTING RETURN 400 ( REQUEST INVALID )....
+  it("Should rejected login if request is invalid", async () => {
+    const response = await supertest(web).post("/api/users/login").send({
+      email: "",
+      password: "",
+    });
+
+    logger.info(response.body);
+    expect(response.status).toBe(400);
+    expect(response.body.errors).toBeDefined();
+  });
+
+  // IF TESTING RETURN 401 ( REQUEST EMAIL OR PASSWORD IS WRONG )
+  it("Should rejected login if password is wrong", async () => {
+    const response = await supertest(web).post("/api/users/login").send({
+      email: "test@example.com",
+      password: "wrong",
+    });
+
+    logger.info(response.body);
+    expect(response.status).toBe(401);
+    expect(response.body.errors).toBeDefined();
+  });
+
+  it("Should rejected login if gmail is wrong", async () => {
+    const response = await supertest(web).post("/api/users/login").send({
+      email: "salah@example.com",
+      password: "rahasia",
+    });
+
+    logger.info(response.body);
+    expect(response.status).toBe(401);
+    expect(response.body.errors).toBeDefined();
   });
 });

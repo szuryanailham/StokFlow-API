@@ -1,49 +1,82 @@
-const { PrismaClient } = require("@prisma/client");
+import { PrismaClient } from "@prisma/client";
+import bcrypt from "bcrypt";
+
 const prisma = new PrismaClient();
 
 async function main() {
-  // Seed User Roles
-  await prisma.userRole.createMany({
-    data: [{ roleName: "admin" }, { roleName: "casier" }, { roleName: "owner" }],
-    skipDuplicates: true,
+  // 1. Seed UserRole
+  const adminRole = await prisma.userRole.upsert({
+    where: { roleName: "admin" },
+    update: {},
+    create: {
+      roleName: "admin",
+    },
   });
 
-  // Get role IDs
-  const adminRole = await prisma.userRole.findUnique({ where: { roleName: "admin" } });
-  const casierRole = await prisma.userRole.findUnique({ where: { roleName: "casier" } });
-  const ownerRole = await prisma.userRole.findUnique({ where: { roleName: "owner" } });
-
-  // Seed Users
-  await prisma.user.createMany({
-    data: [
-      {
-        username: "admin01",
-        email: "admin@example.com",
-        passwordHash: "hashed-password-admin",
-        roleId: adminRole.id,
-      },
-      {
-        username: "casier01",
-        email: "casier@example.com",
-        passwordHash: "hashed-password-casier",
-        roleId: casierRole.id,
-      },
-      {
-        username: "owner01",
-        email: "owner@example.com",
-        passwordHash: "hashed-password-owner",
-        roleId: ownerRole.id,
-      },
-    ],
-    skipDuplicates: true,
+  const casierRole = await prisma.userRole.upsert({
+    where: { roleName: "cashier" },
+    update: {},
+    create: {
+      roleName: "cashier",
+    },
   });
 
-  console.log("✅ Seeder berhasil dijalankan!");
+  const ownerRole = await prisma.userRole.upsert({
+    where: { roleName: "owner" },
+    update: {},
+    create: {
+      roleName: "owner",
+    },
+  });
+
+  // 2. Hash password
+  const hashedPassword = await bcrypt.hash("testpassword123", 10);
+
+  // 3. Seed User
+  await prisma.user.upsert({
+    where: { email: "admin@stokflow.com" },
+    update: {},
+    create: {
+      username: "admin",
+      email: "admin@stokflow.com",
+      password: hashedPassword,
+      token: "default-token-admin",
+      roleId: adminRole.id,
+    },
+  });
+
+  await prisma.user.upsert({
+    where: { email: "staff@stokflow.com" },
+    update: {},
+    create: {
+      username: "casier",
+      email: "staff@stokflow.com",
+      password: hashedPassword,
+      token: "default-token-staff",
+      roleId: casierRole.id,
+    },
+  });
+
+  await prisma.user.upsert({
+    where: { email: "staff@stokflow.com" },
+    update: {},
+    create: {
+      username: "owner",
+      email: "owner@stokflow.com",
+      password: hashedPassword,
+      token: "default-token-staff",
+      roleId: ownerRole.id,
+    },
+  });
+
+  console.log("✅ Seeder selesai");
 }
 
 main()
-  .then(() => prisma.$disconnect())
   .catch((e) => {
-    console.error("❌ Terjadi error saat seeding:", e);
-    return prisma.$disconnect().finally(() => process.exit(1));
+    console.error(e);
+    process.exit(1);
+  })
+  .finally(async () => {
+    await prisma.$disconnect();
   });
