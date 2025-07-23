@@ -41,7 +41,6 @@ model Product {
   minStockThreshold  Int              @default(0) @map("min_stock_threshold")
   createdAt          DateTime         @default(now()) @map("created_at")
   updatedAt          DateTime         @default(now()) @map("updated_at")
-
   transactionItems   TransactionItem[]
   stockMovements     StockMovement[]
 }
