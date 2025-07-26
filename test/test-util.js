@@ -21,3 +21,26 @@ export const createTestUser = async () => {
     },
   });
 };
+
+// export const createTestProduct = async () => {
+//   return await prisma.product.create({
+//     data: {
+//       sku: "test12345",
+//       productName: "Test Product",
+//       description: "Test description",
+//       purchasePrice: 5000,
+//       sellingPrice: 10000,
+//       currentStockQty: 10,
+//       minStockThreshold: 2,
+//     },
+//   });
+// };
+export const removeTestProducts = async () => {
+  await prisma.product.deleteMany({
+    where: {
+      sku: {
+        startsWith: "test",
+      },
+    },
+  });
+};

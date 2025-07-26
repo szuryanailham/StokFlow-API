@@ -5,4 +5,6 @@ import { authMiddleware } from "../middleware/auth-middleware.js";
 const userRouter = express.Router();
 userRouter.use(authMiddleware);
 userRouter.get("/api/products", productController.getAllProducts);
+userRouter.get("/api/products/:id", productController.getDetailProductById);
+userRouter.post("/api/products", productController.createNewProduct);
 export { userRouter };
