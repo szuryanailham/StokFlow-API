@@ -10,9 +10,13 @@ const getAllProducts = async () => {
 const getDetailProductById = async (id) => {
   const detailProduct = await prisma.product.findUnique({
     where: {
-      id: id,
+      id: parseInt(id),
     },
   });
+  if (!detailProduct) {
+    throw new ResponseError(404, "Product not found");
+  }
+
   return detailProduct;
 };
 

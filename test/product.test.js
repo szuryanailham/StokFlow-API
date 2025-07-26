@@ -1,6 +1,8 @@
 import supertest from "supertest";
-import { createTestUser, removeTestUser, removeTestProducts } from "./test-util.js";
+import { createTestUser, removeTestUser, removeTestProducts, createTestProduct } from "./test-util.js";
 import { web } from "../src/application/web.js";
+
+const request = supertest(web);
 describe("GET /api/products", () => {
   beforeEach(async () => {
     await createTestUser();
@@ -91,7 +93,6 @@ describe("POST /api/prodcuts", () => {
       currentStockQty: 10,
       minStockThreshold: 2,
     });
-    console.log(response.body);
     expect(response.status).toBe(409);
     expect(response.body.errors).toBeDefined();
   });
@@ -134,9 +135,45 @@ describe("POST /api/prodcuts", () => {
       currentStockQty: 10,
       minStockThreshold: 2,
     });
-    console.log(response.body);
 
     expect(response.status).toBe(401);
     expect(response.body.errors).toMatch("Unauthorized");
+  });
+
+  describe("GET /api/products/:id", () => {
+    let testProduct;
+
+    beforeEach(async () => {
+      await removeTestProducts();
+      testProduct = await createTestProduct();
+    });
+
+    afterEach(async () => {
+      await removeTestProducts();
+    });
+
+    it("should return 200 and product detail for valid ID", async () => {
+      const response = await request.get(`/api/products/${testProduct.id}`).set("Authorization", `testtoken123`);
+      console.log(response.body);
+      expect(response.status).toBe(200);
+      expect(response.body.data).toBeDefined();
+      expect(response.body.data.id).toBe(testProduct.id);
+      expect(response.body.data.sku).toBe(testProduct.sku);
+    });
+
+    it("should return 404 if product is not found", async () => {
+      const nonExistingId = "999999";
+      const response = await request.get(`/api/products/${nonExistingId}`).set("Authorization", `testtoken123`);
+      console.log(response.body);
+      expect(response.status).toBe(404);
+      expect(response.body.errors).toMatch(/not found/i);
+    });
+
+    // it("should return 401 if no token is provided", async () => {
+    //   const response = await request.get(`/api/products/${testProduct.id}`);
+
+    //   expect(response.status).toBe(401);
+    //   expect(response.body.errors).toMatch(/unauthorized/i);
+    // });
   });
 });

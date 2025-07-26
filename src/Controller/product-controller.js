@@ -38,6 +38,7 @@ const createNewProduct = async (req, res, next) => {
   try {
     const request = req.body;
     const result = await productService.PostNewProduct(request);
+
     res.status(201).json({
       data: result,
     });
