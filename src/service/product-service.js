@@ -2,9 +2,12 @@ import { prisma } from "../application/database.js";
 import { ResponseError } from "../error/response-error.js";
 import { createProductValidation } from "../validation/product-validation.js";
 import { validate } from "../validation/validation.js";
-const getAllProducts = async () => {
-  const products = await prisma.product.findMany();
-  return products;
+
+const getAllProducts = async ({ limit, offset }) => {
+  return prisma.product.findMany({
+    skip: offset,
+    take: limit,
+  });
 };
 
 const getDetailProductById = async (id) => {

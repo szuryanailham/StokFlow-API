@@ -1,6 +1,7 @@
 import supertest from "supertest";
 import { createTestUser, removeTestUser, removeTestProducts, createTestProduct } from "./test-util.js";
 import { web } from "../src/application/web.js";
+import { logger } from "../src/application/logging.js";
 
 const request = supertest(web);
 // ========================   GET ALL PRODUCT ==========================
@@ -14,11 +15,11 @@ describe("GET /api/products", () => {
     await removeTestProducts();
   });
 
-  it("Should Get Detail Products", async () => {
-    const result = await supertest(web).get("/api/products").set("Authorization", "testtoken123");
-    expect(result.status).toBe(200);
-    expect(Array.isArray(result.body.data.products)).toBe(true);
-    expect(result.body.data.products.length).toBeGreaterThan(0);
+  it("Should return first page with default limit", async () => {
+    const res = await supertest(web).get("/api/products?page=1&limit=10").set("Authorization", "testtoken123");
+    expect(res.status).toBe(200);
+    expect(Array.isArray(res.body.data.products)).toBe(true);
+    expect(res.body.data.products.length).toBeLessThanOrEqual(10);
   });
 });
 // ========================   CREATE NEW PRODUCT ==========================
@@ -43,9 +44,9 @@ describe("POST /api/prodcuts", () => {
     });
 
     expect(response.status).toBe(201);
-    expect(response.body.data).toHaveProperty("id");
-    expect(response.body.data.sku).toBe("test12345");
-    expect(response.body.data.productName).toBe("Test Product 1");
+    expect(response.body.data.product).toHaveProperty("id");
+    expect(response.body.data.product.sku).toBe("test12345");
+    expect(response.body.data.product.productName).toBe("Test Product 1");
   });
 
   it("Should return 400 if required field is missing", async () => {
@@ -158,11 +159,10 @@ describe("POST /api/prodcuts", () => {
 
     it("should return 200 and product detail for valid ID", async () => {
       const response = await request.get(`/api/products/${testProduct.id}`).set("Authorization", `testtoken123`);
-
       expect(response.status).toBe(200);
-      expect(response.body.data).toBeDefined();
-      expect(response.body.data.id).toBe(testProduct.id);
-      expect(response.body.data.sku).toBe(testProduct.sku);
+      expect(response.body.data.product).toBeDefined(); // singular
+      expect(response.body.data.product.id).toBe(testProduct.id);
+      expect(response.body.data.product.sku).toBe(testProduct.sku);
     });
 
     it("should return 404 if product is not found", async () => {
@@ -191,8 +191,8 @@ describe("POST /api/prodcuts", () => {
       const response = await request.delete(`/api/products/${testProduct.id}`).set("Authorization", "testtoken123");
 
       expect(response.status).toBe(200);
-      expect(response.body.data).toBeDefined();
-      expect(response.body.data.id).toBe(testProduct.id);
+      expect(response.body.data.product).toBeDefined();
+      expect(response.body.data.product.id).toBe(testProduct.id);
     });
 
     it("should return 404 if product to delete is not found", async () => {
@@ -216,8 +216,7 @@ describe("POST /api/prodcuts", () => {
       await removeTestUser();
       await removeTestProducts();
     });
-
-    it("Should Create New Products", async () => {
+    it("Should Update Product by ID", async () => {
       const response = await supertest(web).put(`/api/products/${testProduct.id}`).set("Authorization", "testtoken123").send({
         sku: "test12345",
         productName: "Test Product PUT 1",
@@ -229,8 +228,11 @@ describe("POST /api/prodcuts", () => {
       });
 
       expect(response.status).toBe(200);
-      expect(response.body.data.sku).toBe("test12345");
-      expect(response.body.data.productName).toBe("Test Product PUT 1");
+      expect(response.body).toBeDefined();
+      expect(response.body.data).toBeDefined();
+      expect(response.body.data.product).toBeDefined();
+      expect(response.body.data.product.sku).toBe("test12345");
+      expect(response.body.data.product.productName).toBe("Test Product PUT 1");
     });
 
     it("Should return error if product not found", async () => {

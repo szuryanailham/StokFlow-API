@@ -1,8 +1,203 @@
-Here's the **corrected and cleaned version** of your API documentation including a fixed section for deleting products by ID. The formatting is consistent and ready for Markdown or Notion documentation use.
+# 📦 Product API Documentation
+
+All endpoints require authentication via an access token in the `Authorization` header.
 
 ---
 
-## 🗑️ Delete Product By ID
+## 🔐 Common Header
+
+```
+Authorization: Bearer <your_token_here>
+```
+
+---
+
+## 📘 GET All Products
+
+### **Endpoint**
+
+```http
+GET /api/products?page=1&limit=10
+```
+
+### **Query Parameters**
+
+| Name  | Type   | Description              |
+| ----- | ------ | ------------------------ |
+| page  | Number | (Optional) Default: `1`  |
+| limit | Number | (Optional) Default: `10` |
+
+### ✅ Response — 200 OK
+
+```json
+{
+  "message": "Get all products success",
+  "data": {
+    "products": [
+      {
+        "id": 1,
+        "sku": "SKU001",
+        "productName": "Product A",
+        ...
+      }
+    ],
+    "pagination": {
+      "page": 1,
+      "limit": 10
+    }
+  }
+}
+```
+
+---
+
+## 📘 GET Product by ID
+
+### **Endpoint**
+
+```http
+GET /api/products/:id
+```
+
+### ✅ Response — 200 OK
+
+```json
+{
+  "message": "Get product detail success",
+  "data": {
+    "product": {
+      "id": 1,
+      "sku": "SKU001",
+      "productName": "Product A",
+      ...
+    }
+  }
+}
+```
+
+### ❌ 404 Not Found
+
+```json
+{
+  "status": "error",
+  "message": "Product with ID 999999 not found"
+}
+```
+
+---
+
+## 🆕 POST Create Product
+
+### **Endpoint**
+
+```http
+POST /api/products
+```
+
+### **Request Body**
+
+```json
+{
+  "sku": "test12345",
+  "productName": "Test Product",
+  "description": "This is a test product",
+  "purchasePrice": 10000.0,
+  "sellingPrice": 12000.0,
+  "currentStockQty": 20,
+  "minStockThreshold": 5
+}
+```
+
+### ✅ Response — 201 Created
+
+```json
+{
+  "data": {
+    "product": {
+      "id": 1,
+      "sku": "test12345",
+      "productName": "Test Product",
+      ...
+    }
+  }
+}
+```
+
+### ❌ 400 Bad Request
+
+- Missing or empty required fields
+- Invalid types
+- Extra fields
+
+```json
+{
+  "status": "error",
+  "errors": "Validation error: sku is required"
+}
+```
+
+### ❌ 409 Conflict
+
+- Duplicate SKU
+
+```json
+{
+  "status": "error",
+  "errors": "SKU already exists"
+}
+```
+
+---
+
+## 📝 PUT Update Product
+
+### **Endpoint**
+
+```http
+PUT /api/products/:id
+```
+
+### **Request Body**
+
+```json
+{
+  "sku": "updatedSKU",
+  "productName": "Updated Product",
+  "description": "Updated product description",
+  "purchasePrice": 11000.0,
+  "sellingPrice": 13000.0,
+  "currentStockQty": 30,
+  "minStockThreshold": 10
+}
+```
+
+### ✅ Response — 200 OK
+
+```json
+{
+  "message": "Product updated successfully",
+  "data": {
+    "product": {
+      "id": 1,
+      "sku": "updatedSKU",
+      ...
+    }
+  }
+}
+```
+
+### ❌ 404 Not Found
+
+```json
+{
+  "status": "error",
+  "message": "Product with ID 999999 not found"
+}
+```
+
+---
+
+## 🗑️ DELETE Product by ID
 
 ### **Endpoint**
 
@@ -10,79 +205,39 @@ Here's the **corrected and cleaned version** of your API documentation including
 DELETE /api/products/:id
 ```
 
-### **Description**
-
-Deletes a product from the database by its ID. This operation is irreversible and also deletes related stock movement history if applicable.
-
----
-
-### 🔐 Headers
-
-```http
-Authorization: Bearer <your_token_here>
-```
-
----
-
-### 📥 Request Body
-
-No request body is required.
-
----
-
-### ✅ Success Response — 200 OK
+### ✅ Response — 200 OK
 
 ```json
 {
-  "status": "success",
-  "message": "Product deleted successfully"
+  "message": "Product deleted successfully",
+  "data": {
+    "product": {
+      "id": 1,
+      "sku": "test12345",
+      ...
+    }
+  }
 }
 ```
 
----
-
-### ❌ Error Responses
-
-**401 Unauthorized**
-If the user is not logged in or token is invalid.
+### ❌ 404 Not Found
 
 ```json
 {
   "status": "error",
-  "message": "Unauthorized access. Please log in."
-}
-```
-
-**403 Forbidden**
-If the user does not have permission to delete the product.
-
-```json
-{
-  "status": "error",
-  "message": "You are not allowed to delete this product"
-}
-```
-
-**404 Not Found**
-If the product ID does not exist.
-
-```json
-{
-  "status": "error",
-  "message": "Product with ID 17 not found"
-}
-```
-
-**500 Internal Server Error**
-If something goes wrong on the server side.
-
-```json
-{
-  "status": "error",
-  "message": "An internal server error occurred"
+  "message": "Product with ID 999999 not found"
 }
 ```
 
 ---
 
-### 🏷️ Tags: \[Products], \[Delete], \[Admin]
+## 🔐 401 Unauthorized
+
+For any request without valid token:
+
+```json
+{
+  "status": "error",
+  "errors": "Unauthorized"
+}
+```

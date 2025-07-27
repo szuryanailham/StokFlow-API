@@ -1,15 +1,22 @@
 import productService from "../service/product-service";
 
 // Get All Product have Stored in Database
-
 const getAllProducts = async (req, res, next) => {
   try {
-    const products = await productService.getAllProducts();
+    const page = Math.max(parseInt(req.query.page) || 1, 1);
+    const limit = Math.max(parseInt(req.query.limit) || 10, 1);
+    const offset = (page - 1) * limit;
+
+    const products = await productService.getAllProducts({ page, limit, offset });
 
     res.status(200).json({
       message: "Get all products success",
       data: {
         products,
+        pagination: {
+          page,
+          limit,
+        },
       },
     });
   } catch (err) {
@@ -18,14 +25,15 @@ const getAllProducts = async (req, res, next) => {
 };
 
 // Get Detail Product By ID
-
 const getDetailProductById = async (req, res, next) => {
   try {
     const id = req.params.id;
     const detailProduct = await productService.getDetailProductById(id);
     res.status(200).json({
       message: "Get product detail success",
-      data: detailProduct,
+      data: {
+        product: detailProduct,
+      },
     });
   } catch (err) {
     next(err);
@@ -33,45 +41,54 @@ const getDetailProductById = async (req, res, next) => {
 };
 
 // POST : Create New Product
-
 const createNewProduct = async (req, res, next) => {
   try {
     const request = req.body;
     const result = await productService.PostNewProduct(request);
 
     res.status(201).json({
-      data: result,
+      message: "Product created successfully",
+      data: {
+        product: result,
+      },
     });
   } catch (err) {
     next(err);
   }
 };
 
+// DELETE Product
 const deleteProduct = async (req, res, next) => {
   try {
     const id = req.params.id;
     const result = await productService.deleteProductById(id);
     res.status(200).json({
       message: "Product deleted successfully",
-      data: result,
+      data: {
+        product: result,
+      },
     });
   } catch (err) {
     next(err);
   }
 };
 
+// PUT : Update Product
 const updateProduct = async (req, res, next) => {
   try {
     const id = req.params.id;
     const request = req.body;
     const result = await productService.updateProductById(id, request);
     res.status(200).json({
-      message: "Product deleted successfully",
-      data: result,
+      message: "Product updated successfully",
+      data: {
+        product: result,
+      },
     });
   } catch (err) {
     res.status(err.status || 500).json({
-      errors: err.message || "Failed to update product",
+      message: "Failed to update product",
+      errors: err.message,
     });
     next(err);
   }
