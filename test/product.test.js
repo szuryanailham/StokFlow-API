@@ -234,18 +234,15 @@ describe("POST /api/prodcuts", () => {
     });
 
     it("Should return error if product not found", async () => {
-      const response = await supertest(web)
-        .put("/api/products/999999") // asumsi ID ini tidak ada
-        .set("Authorization", "testtoken123")
-        .send({
-          sku: "sku-error",
-          productName: "Should Fail",
-          description: "No product with this ID",
-          purchasePrice: 10000.0,
-          sellingPrice: 10000.0,
-          currentStockQty: 5,
-          minStockThreshold: 1,
-        });
+      const response = await supertest(web).put("/api/products/999999").set("Authorization", "testtoken123").send({
+        sku: "sku-error",
+        productName: "Should Fail",
+        description: "No product with this ID",
+        purchasePrice: 10000.0,
+        sellingPrice: 10000.0,
+        currentStockQty: 5,
+        minStockThreshold: 1,
+      });
       expect(response.status).toBe(404);
       expect(response.body.errors).toBeDefined();
     });
