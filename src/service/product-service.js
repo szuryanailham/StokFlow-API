@@ -47,8 +47,58 @@ const PostNewProduct = async (request) => {
   return createdProduct;
 };
 
+const deleteProductById = async (id) => {
+  const existingProduct = await prisma.product.findUnique({
+    where: {
+      id: parseInt(id),
+    },
+  });
+
+  if (!existingProduct) {
+    throw new ResponseError(404, "Product not found");
+  }
+
+  const deletedProduct = await prisma.product.delete({
+    where: {
+      id: parseInt(id),
+    },
+  });
+
+  return deletedProduct;
+};
+
+const updateProductById = async (id, request) => {
+  const numericId = Number(id);
+  const product = validate(createProductValidation, request);
+  const existingProduct = await prisma.product.findUnique({
+    where: { id: numericId },
+  });
+
+  if (!existingProduct) {
+    throw new ResponseError(404, "Product not found");
+  }
+
+  const updatedProduct = await prisma.product.update({
+    where: { id: numericId },
+    data: product,
+    select: {
+      sku: true,
+      productName: true,
+      description: true,
+      purchasePrice: true,
+      sellingPrice: true,
+      currentStockQty: true,
+      minStockThreshold: true,
+      updatedAt: true,
+    },
+  });
+  return updatedProduct;
+};
+
 export default {
   getAllProducts,
+  updateProductById,
   getDetailProductById,
+  deleteProductById,
   PostNewProduct,
 };

@@ -47,8 +47,40 @@ const createNewProduct = async (req, res, next) => {
   }
 };
 
+const deleteProduct = async (req, res, next) => {
+  try {
+    const id = req.params.id;
+    const result = await productService.deleteProductById(id);
+    res.status(200).json({
+      message: "Product deleted successfully",
+      data: result,
+    });
+  } catch (err) {
+    next(err);
+  }
+};
+
+const updateProduct = async (req, res, next) => {
+  try {
+    const id = req.params.id;
+    const request = req.body;
+    const result = await productService.updateProductById(id, request);
+    res.status(200).json({
+      message: "Product deleted successfully",
+      data: result,
+    });
+  } catch (err) {
+    res.status(err.status || 500).json({
+      errors: err.message || "Failed to update product",
+    });
+    next(err);
+  }
+};
+
 export default {
+  deleteProduct,
   getAllProducts,
   getDetailProductById,
+  updateProduct,
   createNewProduct,
 };

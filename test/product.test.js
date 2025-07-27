@@ -3,6 +3,7 @@ import { createTestUser, removeTestUser, removeTestProducts, createTestProduct }
 import { web } from "../src/application/web.js";
 
 const request = supertest(web);
+// ========================   GET ALL PRODUCT ==========================
 describe("GET /api/products", () => {
   beforeEach(async () => {
     await createTestUser();
@@ -20,7 +21,7 @@ describe("GET /api/products", () => {
     expect(result.body.data.products.length).toBeGreaterThan(0);
   });
 });
-
+// ========================   CREATE NEW PRODUCT ==========================
 describe("POST /api/prodcuts", () => {
   beforeEach(async () => {
     await createTestUser();
@@ -119,9 +120,9 @@ describe("POST /api/prodcuts", () => {
       sellingPrice: 12000.0,
       currentStockQty: 10,
       minStockThreshold: 2,
-      extraField: "tidak valid", // tidak seharusnya ada
+      extraField: "tidak valid",
     });
-    console.log(response.body);
+
     expect(response.status).toBe(400);
     expect(response.body.errors).toBeDefined();
   });
@@ -140,21 +141,24 @@ describe("POST /api/prodcuts", () => {
     expect(response.body.errors).toMatch("Unauthorized");
   });
 
+  // ========================   DETAIL PRODUCT ==========================
+
   describe("GET /api/products/:id", () => {
     let testProduct;
 
     beforeEach(async () => {
-      await removeTestProducts();
+      await createTestUser();
       testProduct = await createTestProduct();
     });
 
     afterEach(async () => {
+      await removeTestUser();
       await removeTestProducts();
     });
 
     it("should return 200 and product detail for valid ID", async () => {
       const response = await request.get(`/api/products/${testProduct.id}`).set("Authorization", `testtoken123`);
-      console.log(response.body);
+
       expect(response.status).toBe(200);
       expect(response.body.data).toBeDefined();
       expect(response.body.data.id).toBe(testProduct.id);
@@ -164,16 +168,99 @@ describe("POST /api/prodcuts", () => {
     it("should return 404 if product is not found", async () => {
       const nonExistingId = "999999";
       const response = await request.get(`/api/products/${nonExistingId}`).set("Authorization", `testtoken123`);
-      console.log(response.body);
+
       expect(response.status).toBe(404);
       expect(response.body.errors).toMatch(/not found/i);
     });
+  });
 
-    // it("should return 401 if no token is provided", async () => {
-    //   const response = await request.get(`/api/products/${testProduct.id}`);
+  // ========================   DELETE PRODUCT ==========================
+  describe("DELETE /api/products/:id", () => {
+    let testProduct;
 
-    //   expect(response.status).toBe(401);
-    //   expect(response.body.errors).toMatch(/unauthorized/i);
-    // });
+    beforeEach(async () => {
+      await createTestUser();
+      testProduct = await createTestProduct();
+    });
+
+    afterEach(async () => {
+      await removeTestUser();
+    });
+
+    it("should return 200 and delete the product for valid ID", async () => {
+      const response = await request.delete(`/api/products/${testProduct.id}`).set("Authorization", "testtoken123");
+
+      expect(response.status).toBe(200);
+      expect(response.body.data).toBeDefined();
+      expect(response.body.data.id).toBe(testProduct.id);
+    });
+
+    it("should return 404 if product to delete is not found", async () => {
+      const nonExistingId = "999999";
+      const response = await request.delete(`/api/products/${nonExistingId}`).set("Authorization", "testtoken123");
+      expect(response.status).toBe(404);
+      expect(response.body.errors).toMatch(/not found/i);
+    });
+  });
+
+  // ========================   UPDATE PRODUCT ==========================
+  describe("DELETE /api/products/:id", () => {
+    let testProduct;
+
+    beforeEach(async () => {
+      await createTestUser();
+      testProduct = await createTestProduct();
+    });
+
+    afterEach(async () => {
+      await removeTestUser();
+      await removeTestProducts();
+    });
+
+    it("Should Create New Products", async () => {
+      const response = await supertest(web).put(`/api/products/${testProduct.id}`).set("Authorization", "testtoken123").send({
+        sku: "test12345",
+        productName: "Test Product PUT 1",
+        description: "This is a test product",
+        purchasePrice: 10000.0,
+        sellingPrice: 10000.0,
+        currentStockQty: 20,
+        minStockThreshold: 5,
+      });
+
+      expect(response.status).toBe(200);
+      expect(response.body.data.sku).toBe("test12345");
+      expect(response.body.data.productName).toBe("Test Product PUT 1");
+    });
+
+    it("Should return error if product not found", async () => {
+      const response = await supertest(web)
+        .put("/api/products/999999") // asumsi ID ini tidak ada
+        .set("Authorization", "testtoken123")
+        .send({
+          sku: "sku-error",
+          productName: "Should Fail",
+          description: "No product with this ID",
+          purchasePrice: 10000.0,
+          sellingPrice: 10000.0,
+          currentStockQty: 5,
+          minStockThreshold: 1,
+        });
+      expect(response.status).toBe(404);
+      expect(response.body.errors).toBeDefined();
+    });
+
+    it("Should return unauthorized if no token", async () => {
+      const response = await supertest(web).put(`/api/products/${testProduct.id}`).send({
+        sku: "unauthorized",
+        productName: "No Token",
+        purchasePrice: 10000,
+        sellingPrice: 12000,
+        currentStockQty: 5,
+        minStockThreshold: 1,
+      });
+      expect(response.status).toBe(401);
+      expect(response.body.errors).toBeDefined();
+    });
   });
 });

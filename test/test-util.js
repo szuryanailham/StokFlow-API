@@ -10,6 +10,9 @@ export const removeTestUser = async () => {
 };
 
 export const createTestUser = async () => {
+  await prisma.user.deleteMany({
+    where: { username: "test" },
+  });
   const hashedPassword = await bcrypt.hash("rahasia", 10);
   await prisma.user.create({
     data: {
