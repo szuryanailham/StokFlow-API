@@ -1,8 +1,8 @@
 import Joi from "joi";
 
-const transactionTypeEnum = ["INCOME", "EXPENSE"];
+const transactionTypeEnum = ["SALE", "PURCHASE"];
 
-export const transactionSchema = Joi.object({
+const transactionValidated = Joi.object({
   transactionCode: Joi.string().required().max(255),
   transactionType: Joi.string()
     .valid(...transactionTypeEnum)
@@ -12,4 +12,6 @@ export const transactionSchema = Joi.object({
   buyerSellerName: Joi.string().max(255).optional().allow(null, ""),
   notes: Joi.string().optional().allow(null, ""),
   userId: Joi.number().required(),
-});
+}).unknown(false);
+
+export { transactionValidated };

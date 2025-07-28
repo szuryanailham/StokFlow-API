@@ -48,3 +48,26 @@ export const removeTestProducts = async () => {
     },
   });
 };
+
+export const deleteTestTransaction = async () => {
+  await prisma.transaction.deleteMany({
+    where: {
+      transactionCode: {
+        startsWith: "test",
+      },
+    },
+  });
+};
+
+export const createTestTransaction = async () => {
+  return await prisma.transaction.create({
+    data: {
+      transactionCode: "test-duplicate123",
+      transactionType: "SALE",
+      totalAmount: 100000.0,
+      buyerSellerName: "Duplicate User",
+      notes: "This is for duplicate test",
+      userId: 2,
+    },
+  });
+};

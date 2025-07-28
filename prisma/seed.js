@@ -71,9 +71,10 @@ async function main() {
 
   await prisma.product.deleteMany();
 
-  const products = await prisma.product.createMany({
+  await prisma.product.createMany({
     data: [
       {
+        id: 1,
         sku: "SKU001",
         productName: "Product A",
         description: "Description A",
@@ -83,6 +84,7 @@ async function main() {
         minStockThreshold: 5,
       },
       {
+        id: 2,
         sku: "SKU002",
         productName: "Product B",
         description: "Description B",
@@ -92,6 +94,7 @@ async function main() {
         minStockThreshold: 3,
       },
       {
+        id: 3,
         sku: "SKU003",
         productName: "Product C",
         description: "Description C",
@@ -107,127 +110,28 @@ async function main() {
   await prisma.transaction.createMany({
     data: [
       {
+        id: 1,
         transactionCode: "TRX001",
         transactionType: "PURCHASE",
         totalAmount: 150000,
         buyerSellerName: "PT Sumber Rejeki",
         notes: "Pembelian stok awal",
+        isDeleted: false,
         userId: 2,
       },
       {
+        id: 2,
         transactionCode: "TRX002",
-        transactionType: "SALE",
-        totalAmount: 100000,
-        buyerSellerName: "CV Amanah Jaya",
-        notes: "Penjualan ke distributor",
-        userId: 2,
-      },
-      {
-        transactionCode: "TRX003",
-        transactionType: "SALE",
-        totalAmount: 50000,
-        buyerSellerName: "End Customer",
-        notes: "Penjualan retail langsung",
-        userId: 2,
-      },
-      {
-        transactionCode: "TRX004",
         transactionType: "PURCHASE",
-        totalAmount: 200000,
-        buyerSellerName: "PT Makmur Sentosa",
-        notes: "Pembelian alat produksi",
-        userId: 2,
-      },
-      {
-        transactionCode: "TRX005",
-        transactionType: "SALE",
-        totalAmount: 120000,
-        buyerSellerName: "Toko Grosir Abadi",
-        notes: "Penjualan dalam kota",
-        userId: 2,
-      },
-      {
-        transactionCode: "TRX006",
-        transactionType: "PURCHASE",
-        totalAmount: 175000,
-        buyerSellerName: "Supplier Nusantara",
-        notes: "Bahan baku tambahan",
-        userId: 2,
-      },
-      {
-        transactionCode: "TRX007",
-        transactionType: "SALE",
-        totalAmount: 130000,
-        buyerSellerName: "CV Harapan Baru",
-        notes: "Penjualan luar kota",
-        userId: 2,
-      },
-      {
-        transactionCode: "TRX008",
-        transactionType: "SALE",
-        totalAmount: 95000,
-        buyerSellerName: "Retail Customer A",
-        notes: "Penjualan retail",
-        userId: 2,
-      },
-      {
-        transactionCode: "TRX009",
-        transactionType: "PURCHASE",
-        totalAmount: 300000,
-        buyerSellerName: "PT Mega Persada",
-        notes: "Stok gudang besar",
-        userId: 2,
-      },
-      {
-        transactionCode: "TRX010",
-        transactionType: "SALE",
-        totalAmount: 85000,
-        buyerSellerName: "Retail Customer B",
-        notes: "Penjualan langsung",
-        userId: 2,
-      },
-      {
-        transactionCode: "TRX011",
-        transactionType: "SALE",
-        totalAmount: 110000,
-        buyerSellerName: "CV Usaha Mandiri",
-        notes: "Penjualan ke reseller",
-        userId: 2,
-      },
-      {
-        transactionCode: "TRX012",
-        transactionType: "PURCHASE",
-        totalAmount: 220000,
-        buyerSellerName: "PT Sinar Gemilang",
-        notes: "Restock mingguan",
-        userId: 2,
-      },
-      {
-        transactionCode: "TRX013",
-        transactionType: "SALE",
-        totalAmount: 105000,
-        buyerSellerName: "End Customer C",
-        notes: "Penjualan reguler",
-        userId: 2,
-      },
-      {
-        transactionCode: "TRX014",
-        transactionType: "PURCHASE",
-        totalAmount: 160000,
-        buyerSellerName: "PT Logistik Cepat",
-        notes: "Biaya logistik",
-        userId: 2,
-      },
-      {
-        transactionCode: "TRX015",
-        transactionType: "SALE",
-        totalAmount: 140000,
-        buyerSellerName: "Distributor XYZ",
-        notes: "Distribusi nasional",
+        totalAmount: 150000,
+        buyerSellerName: "PT Sumber Rejeki",
+        notes: "Pembelian stok awal",
+        isDeleted: false,
         userId: 2,
       },
     ],
   });
+  console.log("✅ Seeder berhasil dijalankan!");
 }
 
 main()
