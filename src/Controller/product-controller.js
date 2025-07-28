@@ -1,6 +1,4 @@
 import productService from "../service/product-service";
-
-// Get All Product have Stored in Database
 const getAllProducts = async (req, res, next) => {
   try {
     const page = Math.max(parseInt(req.query.page) || 1, 1);

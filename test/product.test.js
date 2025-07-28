@@ -1,7 +1,6 @@
 import supertest from "supertest";
 import { createTestUser, removeTestUser, removeTestProducts, createTestProduct } from "./test-util.js";
 import { web } from "../src/application/web.js";
-import { logger } from "../src/application/logging.js";
 
 const request = supertest(web);
 // ========================   GET ALL PRODUCT ==========================
@@ -12,7 +11,6 @@ describe("GET /api/products", () => {
 
   afterEach(async () => {
     await removeTestUser();
-    await removeTestProducts();
   });
 
   it("Should return first page with default limit", async () => {
@@ -32,6 +30,7 @@ describe("POST /api/prodcuts", () => {
     await removeTestProducts();
     await removeTestUser();
   });
+
   it("Should Create New Products", async () => {
     const response = await supertest(web).post("/api/products").set("Authorization", "testtoken123").send({
       sku: "test12345",
