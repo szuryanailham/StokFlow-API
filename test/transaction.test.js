@@ -29,17 +29,20 @@ describe("POST /api/transactions/create", () => {
     await removeTestUser();
     await deleteTestTransaction();
   });
-
   it("Should Create New Transaction", async () => {
+    const randomCode = `TEST-${Date.now()}-${Math.floor(Math.random() * 1000)}`;
+
     const res = await supertest(web).post("/api/transactions/create").set("Authorization", "testtoken123").send({
-      transactionCode: "test-12345",
+      transactionCode: randomCode,
       transactionType: "SALE",
       totalAmount: 200000.0,
       buyerSellerName: "Testing-user",
       notes: "Testing paragraph",
       userId: 2,
     });
+    console.log(res.body);
     expect(res.status).toBe(201);
+    expect(res.body).toHaveProperty("data.transactions.transactionCode", randomCode);
   });
 
   it("❌ Should Fail Without Authorization", async () => {
@@ -51,7 +54,6 @@ describe("POST /api/transactions/create", () => {
       notes: "Testing paragraph",
       userId: 2,
     });
-    console.log(res.body);
     expect(res.status).toBe(401);
     expect(res.body).toHaveProperty("errors");
     expect(res.body.errors).toBe("Unauthorized");
@@ -193,5 +195,23 @@ describe("GET /api/transactions/:id", () => {
 
     expect(response.status).toBe(401);
     expect(response.body).toHaveProperty("errors");
+  });
+});
+
+describe("DELETE /api/transactions/:id", () => {
+  beforeEach(async () => {
+    await createTestUser();
+    testTransaction = await createTestTransaction();
+  });
+
+  afterEach(async () => {
+    await removeTestUser();
+    await deleteTestTransaction();
+  });
+
+  it("✅ Should delete transaction by ID", async () => {
+    const response = await supertest(web).delete(`/api/transactions/${testTransaction.id}`).set("Authorization", "testtoken123");
+    console.log(response.body);
+    expect(response.status).toBe(200);
   });
 });

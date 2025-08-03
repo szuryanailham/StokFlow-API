@@ -30,7 +30,7 @@ const createNewTransactions = async (req, res, next) => {
     res.status(201).json({
       message: "New Transaction created successfully",
       data: {
-        product: result,
+        transactions: result,
       },
     });
   } catch (err) {
@@ -70,8 +70,30 @@ const detailTransactionById = async (req, res, next) => {
   }
 };
 
+const deleteTransactions = async (req, res, next) => {
+  try {
+    const id = req.params.id;
+    if (!id) {
+      return res.status(400).json({ message: "Transaction ID is required" });
+    }
+    const result = await transactionService.deleteTransactions(id);
+    if (!result) {
+      return res.status(404).json({ message: "Transaction not found" });
+    }
+    res.status(200).json({
+      message: "Transaction deleted successfully",
+      data: {
+        transaction: result,
+      },
+    });
+  } catch (err) {
+    next(err);
+  }
+};
+
 export default {
   detailTransactionById,
+  deleteTransactions,
   getAllTransactions,
   patchTransactionById,
   createNewTransactions,

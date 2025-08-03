@@ -7,8 +7,8 @@ import { validate } from "../validation/validation";
 //  ======== Get all transactions with pagination (limit & offset) ===========
 const getAllTransactions = async ({ limit, offset }) => {
   return prisma.transaction.findMany({
-    skip: offset, // Skip number of records (offset)
-    take: limit, // Take number of records (limit)
+    skip: offset,
+    take: limit,
   });
 };
 
@@ -95,9 +95,23 @@ const detailTransactions = async (id) => {
   return detailTransactions;
 };
 
-// Export all transaction services
+const deleteTransactions = async (id) => {
+  const existedTransactions = await prisma.transaction.findUnique({
+    where: {
+      id: parseInt(id),
+    },
+  });
+
+  if (!existedTransactions) {
+    throw new ResponseError(404, "Transaction not found");
+  }
+
+  return existedTransactions;
+};
+
 export default {
   getAllTransactions,
+  deleteTransactions,
   detailTransactions,
   createNewTransactions,
   updateTransactions,
