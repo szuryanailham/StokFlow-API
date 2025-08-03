@@ -98,3 +98,100 @@ describe("POST /api/transactions/create", () => {
     expect(res.body).toHaveProperty("errors");
   });
 });
+
+describe("PATCH /api/transactions/:id", () => {
+  let testTransaction;
+  beforeEach(async () => {
+    await createTestUser();
+    testTransaction = await createTestTransaction();
+  });
+
+  afterEach(async () => {
+    await removeTestUser();
+    await deleteTestTransaction();
+  });
+
+  it("Should update the transaction by ID", async () => {
+    const response = await supertest(web).patch(`/api/transactions/${testTransaction.id}`).set("Authorization", "testtoken123").send({
+      buyerSellerName: "Updated Buyer",
+      notes: "Updated notes paragraph",
+    });
+    expect(response.status).toBe(200);
+    expect(response.body).toBeDefined();
+    expect(response.body).toHaveProperty("data");
+
+    const data = response.body.data.transactions;
+    expect(data.buyerSellerName).toBe("Updated Buyer");
+    expect(data.notes).toBe("Updated notes paragraph");
+  });
+
+  it("❌ Should return 404 if transaction not found", async () => {
+    const invalidId = 999999;
+    const response = await supertest(web).patch(`/api/transactions/${invalidId}`).set("Authorization", "testtoken123").send({
+      buyerSellerName: "Doesn't Matter",
+      notes: "Doesn't Matter",
+    });
+
+    expect(response.status).toBe(404);
+    expect(response.body).toHaveProperty("errors", "Transaction not found");
+  });
+
+  it("❌ Should return 400 if validation fails", async () => {
+    const response = await supertest(web).patch(`/api/transactions/${testTransaction.id}`).set("Authorization", "testtoken123").send({
+      buyerSellerName: 123, // salah tipe data
+      notes: null,
+    });
+
+    expect(response.status).toBe(400);
+    expect(response.body).toHaveProperty("errors", '"buyerSellerName" must be a string');
+  });
+
+  it("❌ Should fail without Authorization", async () => {
+    const response = await supertest(web).patch(`/api/transactions/${testTransaction.id}`).send({
+      buyerSellerName: "No Auth",
+      notes: "No Auth",
+    });
+    console.log(response.body);
+    expect(response.status).toBe(401); // atau 403 tergantung middleware
+    expect(response.body).toHaveProperty("errors", "Unauthorized");
+  });
+});
+
+describe("GET /api/transactions/:id", () => {
+  beforeEach(async () => {
+    await createTestUser();
+    testTransaction = await createTestTransaction();
+  });
+
+  afterEach(async () => {
+    await removeTestUser();
+    await deleteTestTransaction();
+  });
+
+  it("✅ Should return transaction detail by ID", async () => {
+    const response = await supertest(web).get(`/api/transactions/${testTransaction.id}`).set("Authorization", "testtoken123");
+
+    expect(response.status).toBe(200);
+    expect(response.body).toHaveProperty("data");
+    expect(response.body.data.transactions).toMatchObject({
+      id: testTransaction.id,
+      buyerSellerName: testTransaction.buyerSellerName,
+      notes: testTransaction.notes,
+    });
+  });
+
+  it("❌ Should return 404 if transaction not found", async () => {
+    const invalidId = 999999;
+    const response = await supertest(web).get(`/api/transactions/${invalidId}`).set("Authorization", "testtoken123");
+
+    expect(response.status).toBe(404);
+    expect(response.body).toHaveProperty("errors", "Transaction not found");
+  });
+
+  it("❌ Should return 401 if no authorization token", async () => {
+    const response = await supertest(web).get(`/api/transactions/${testTransaction.id}`);
+
+    expect(response.status).toBe(401);
+    expect(response.body).toHaveProperty("errors");
+  });
+});

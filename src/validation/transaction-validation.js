@@ -14,4 +14,9 @@ const transactionValidated = Joi.object({
   userId: Joi.number().required(),
 }).unknown(false);
 
+export const updateTransactionValidated = Joi.object({
+  buyerSellerName: Joi.string().optional().allow(null, ""),
+  notes: Joi.string().optional().allow(null, ""),
+});
+
 export { transactionValidated };

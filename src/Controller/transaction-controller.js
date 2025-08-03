@@ -38,7 +38,41 @@ const createNewTransactions = async (req, res, next) => {
   }
 };
 
+const patchTransactionById = async (req, res, next) => {
+  try {
+    const id = req.params.id;
+    const request = req.body;
+    const result = await transactionService.updateTransactions(id, request);
+    res.status(200).json({
+      message: "Transaction updated successfully",
+      data: {
+        transactions: result,
+      },
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+const detailTransactionById = async (req, res, next) => {
+  try {
+    const id = req.params.id;
+    const result = await transactionService.detailTransactions(id);
+
+    res.status(200).json({
+      message: "Transaction fetched successfully",
+      data: {
+        transactions: result,
+      },
+    });
+  } catch (err) {
+    next(err);
+  }
+};
+
 export default {
+  detailTransactionById,
   getAllTransactions,
+  patchTransactionById,
   createNewTransactions,
 };

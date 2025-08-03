@@ -14,6 +14,8 @@ userRouter.put("/api/products/:id", productController.updateProduct);
 
 // transaction endpoint
 userRouter.get("/api/transactions", transctionController.getAllTransactions);
+userRouter.get("/api/transactions/:id", transctionController.detailTransactionById);
 userRouter.post("/api/transactions/create", transctionController.createNewTransactions);
+userRouter.patch("/api/transactions/:id", transctionController.patchTransactionById);
 
 export { userRouter };
