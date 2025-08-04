@@ -71,3 +71,46 @@ export const createTestTransaction = async () => {
     },
   });
 };
+
+export const createTestItemTransaction = async () => {
+  await prisma.transactionItem.createMany({
+    data: [
+      {
+        transactionId: 2,
+        productId: 1,
+        quantity: 2,
+        unitPriceAtTransaction: 15000,
+        subtotal: 30000,
+      },
+      {
+        transactionId: 2,
+        productId: 2,
+        quantity: 1,
+        unitPriceAtTransaction: 20000,
+        subtotal: 20000,
+      },
+      {
+        transactionId: 2,
+        productId: 3,
+        quantity: 3,
+        unitPriceAtTransaction: 10000,
+        subtotal: 30000,
+      },
+    ],
+  });
+
+  // Query ulang untuk mendapatkan data yang baru dibuat
+  return await prisma.transactionItem.findMany({
+    where: {
+      transactionId: 2,
+    },
+  });
+};
+
+export const deleteTestTransactionItem = async (id) => {
+  await prisma.transactionItem.deleteMany({
+    where: {
+      transactionId: 2,
+    },
+  });
+};

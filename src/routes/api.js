@@ -2,6 +2,7 @@ import express from "express";
 import productController from "../Controller/product-controller.js";
 import { authMiddleware } from "../middleware/auth-middleware.js";
 import transctionController from "../Controller/transaction-controller.js";
+import transactionItemController from "../Controller/transactionItem-controller.js";
 
 const userRouter = express.Router();
 userRouter.use(authMiddleware);
@@ -18,5 +19,8 @@ userRouter.get("/api/transactions/:id", transctionController.detailTransactionBy
 userRouter.post("/api/transactions/create", transctionController.createNewTransactions);
 userRouter.patch("/api/transactions/:id", transctionController.patchTransactionById);
 userRouter.delete("/api/transactions/:id", transctionController.deleteTransactions);
+
+// transaction item endpoint
+userRouter.get("/api/transactions/:id/items", transactionItemController.getItemTransactionByTransactionId);
 
 export { userRouter };

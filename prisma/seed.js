@@ -5,72 +5,70 @@ const prisma = new PrismaClient();
 
 async function main() {
   // 1. Seed UserRole
-  const adminRole = await prisma.userRole.upsert({
-    where: { roleName: "admin" },
-    update: {},
-    create: {
-      roleName: "admin",
-    },
-  });
-
-  const casierRole = await prisma.userRole.upsert({
-    where: { roleName: "cashier" },
-    update: {},
-    create: {
-      roleName: "cashier",
-    },
-  });
-
-  const ownerRole = await prisma.userRole.upsert({
-    where: { roleName: "owner" },
-    update: {},
-    create: {
-      roleName: "owner",
-    },
-  });
+  const [adminRole, casierRole, ownerRole] = await Promise.all([
+    prisma.userRole.upsert({
+      where: { roleName: "admin" },
+      update: {},
+      create: { roleName: "admin" },
+    }),
+    prisma.userRole.upsert({
+      where: { roleName: "cashier" },
+      update: {},
+      create: { roleName: "cashier" },
+    }),
+    prisma.userRole.upsert({
+      where: { roleName: "owner" },
+      update: {},
+      create: { roleName: "owner" },
+    }),
+  ]);
 
   // 2. Hash password
   const hashedPassword = await bcrypt.hash("testpassword123", 10);
 
-  // 3. Seed User
-  await prisma.user.upsert({
-    where: { email: "admin@stokflow.com" },
-    update: {},
-    create: {
-      username: "admin",
-      email: "admin@stokflow.com",
-      password: hashedPassword,
-      token: "default-token-admin",
-      roleId: adminRole.id,
-    },
-  });
+  // 3. Seed Users
+  await Promise.all([
+    prisma.user.upsert({
+      where: { email: "admin@stokflow.com" },
+      update: {},
+      create: {
+        username: "admin",
+        email: "admin@stokflow.com",
+        password: hashedPassword,
+        token: "default-token-admin",
+        roleId: adminRole.id,
+      },
+    }),
+    prisma.user.upsert({
+      where: { email: "staff@stokflow.com" },
+      update: {},
+      create: {
+        username: "casier",
+        email: "staff@stokflow.com",
+        password: hashedPassword,
+        token: "default-token-staff",
+        roleId: casierRole.id,
+      },
+    }),
+    prisma.user.upsert({
+      where: { email: "owner@stokflow.com" },
+      update: {},
+      create: {
+        username: "owner",
+        email: "owner@stokflow.com",
+        password: hashedPassword,
+        token: "default-token-owner",
+        roleId: ownerRole.id,
+      },
+    }),
+  ]);
 
-  await prisma.user.upsert({
-    where: { email: "staff@stokflow.com" },
-    update: {},
-    create: {
-      username: "casier",
-      email: "staff@stokflow.com",
-      password: hashedPassword,
-      token: "default-token-staff",
-      roleId: casierRole.id,
-    },
-  });
-
-  await prisma.user.upsert({
-    where: { email: "staff@stokflow.com" },
-    update: {},
-    create: {
-      username: "owner",
-      email: "owner@stokflow.com",
-      password: hashedPassword,
-      token: "default-token-staff",
-      roleId: ownerRole.id,
-    },
-  });
-
+  // 4. Bersihkan data lama secara berurutan
+  await prisma.transactionItem.deleteMany();
+  await prisma.transaction.deleteMany();
   await prisma.product.deleteMany();
 
+  // 5. Seed Products
   await prisma.product.createMany({
     data: [
       {
@@ -105,8 +103,8 @@ async function main() {
       },
     ],
   });
-  await prisma.transaction.deleteMany();
 
+  // 6. Seed Transactions
   await prisma.transaction.createMany({
     data: [
       {
@@ -131,12 +129,40 @@ async function main() {
       },
     ],
   });
+
+  // 7. Seed Transaction Items
+  await prisma.transactionItem.createMany({
+    data: [
+      {
+        transactionId: 1,
+        productId: 1,
+        quantity: 2,
+        unitPriceAtTransaction: 15000,
+        subtotal: 30000,
+      },
+      {
+        transactionId: 1,
+        productId: 1,
+        quantity: 1,
+        unitPriceAtTransaction: 20000,
+        subtotal: 20000,
+      },
+      {
+        transactionId: 2,
+        productId: 2,
+        quantity: 3,
+        unitPriceAtTransaction: 10000,
+        subtotal: 30000,
+      },
+    ],
+  });
+
   console.log("✅ Seeder berhasil dijalankan!");
 }
 
 main()
   .catch((e) => {
-    console.error(e);
+    console.error("❌ Error during seed:", e);
     process.exit(1);
   })
   .finally(async () => {

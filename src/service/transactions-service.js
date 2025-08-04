@@ -1,4 +1,3 @@
-import { request } from "express";
 import { prisma } from "../application/database";
 import { ResponseError } from "../error/response-error";
 import { transactionValidated, updateTransactionValidated } from "../validation/transaction-validation";
