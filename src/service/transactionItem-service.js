@@ -1,5 +1,7 @@
 import { prisma } from "../application/database";
 import { ResponseError } from "../error/response-error";
+import { transactionItemSchema } from "../validation/transactionItem-validation";
+import { validate } from "../validation/validation";
 
 const getTransactionItemsByTransactionId = async (id) => {
   const itemTransactions = await prisma.transactionItem.findMany({
@@ -17,6 +19,23 @@ const getTransactionItemsByTransactionId = async (id) => {
   return itemTransactions;
 };
 
+const postTransactionItems = async (transactionId, request) => {
+  const transactionItems = validate(transactionItemSchema, request);
+
+  const itemsWithTransactionId = transactionItems.map((item) => ({
+    ...item,
+    transactionId,
+  }));
+
+  const createdItemsTransaction = await prisma.transactionItem.createMany({
+    data: itemsWithTransactionId,
+    skipDuplicates: true,
+  });
+
+  return createdItemsTransaction;
+};
+
 export default {
   getTransactionItemsByTransactionId,
+  postTransactionItems,
 };

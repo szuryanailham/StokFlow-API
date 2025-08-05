@@ -1,12 +1,5 @@
 import Joi from "joi";
-
-const transactionItemSchema = Joi.object({
-  transactionId: Joi.number().integer().positive().required().messages({
-    "number.base": "Transaction ID must be a number.",
-    "number.positive": "Transaction ID must be greater than 0.",
-    "any.required": "Transaction ID is required.",
-  }),
-
+const singleTransactionItemSchema = Joi.object({
   productId: Joi.number().integer().positive().required().messages({
     "number.base": "Product ID must be a number.",
     "number.positive": "Product ID must be greater than 0.",
@@ -31,4 +24,5 @@ const transactionItemSchema = Joi.object({
   }),
 });
 
+const transactionItemSchema = Joi.array().items(singleTransactionItemSchema);
 export { transactionItemSchema };
