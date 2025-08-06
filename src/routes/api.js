@@ -23,5 +23,5 @@ userRouter.delete("/api/transactions/:id", transctionController.deleteTransactio
 // transaction item endpoint
 userRouter.get("/api/transactions/:id/items", transactionItemController.getItemTransactionByTransactionId);
 userRouter.post("/api/transactions/:id/items", transactionItemController.postNewItemTransaction);
-
+userRouter.patch("/api/transactions/:transactionId/items/:itemId", transactionItemController.updateTransactionItemController);
 export { userRouter };

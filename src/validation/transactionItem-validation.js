@@ -1,4 +1,5 @@
 import Joi from "joi";
+
 const singleTransactionItemSchema = Joi.object({
   productId: Joi.number().integer().positive().required().messages({
     "number.base": "Product ID must be a number.",
@@ -25,4 +26,4 @@ const singleTransactionItemSchema = Joi.object({
 });
 
 const transactionItemSchema = Joi.array().items(singleTransactionItemSchema);
-export { transactionItemSchema };
+export { transactionItemSchema, singleTransactionItemSchema };

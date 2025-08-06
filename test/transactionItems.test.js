@@ -1,7 +1,7 @@
 import supertest from "supertest";
 import { createTestItemTransaction, createTestUser, deleteTestTransactionItem, removeTestUser } from "./test-util.js";
 import { web } from "../src/application/web.js";
-import { prisma } from "../src/application/database.js";
+
 describe("GET /api/transactions/:id/items", () => {
   let Testing;
 
@@ -12,7 +12,7 @@ describe("GET /api/transactions/:id/items", () => {
 
   afterEach(async () => {
     await removeTestUser();
-    await deleteTestTransactionItem(Testing.id);
+    await deleteTestTransactionItem();
   });
 
   it("Should return Items transaction by id transaction", async () => {
@@ -96,7 +96,7 @@ describe("POST /api/transactions/:id/items", () => {
       },
     ];
 
-    const response = await supertest(web).post(`/api/transactions/2/items`).send(requestData); // no Authorization header
+    const response = await supertest(web).post(`/api/transactions/2/items`).send(requestData);
 
     expect(response.status).toBe(401);
   });
@@ -114,5 +114,32 @@ describe("POST /api/transactions/:id/items", () => {
     const response = await supertest(web).post(`/api/transactions/9999/items`).set("Authorization", "testtoken123").send(requestData);
 
     expect(response.status).toBe(404);
+  });
+});
+
+describe("PATCH /api/transactions/:transactionId/items/:itemId", () => {
+  let item;
+  beforeAll(async () => {
+    await createTestUser();
+    const items = await createTestItemTransaction();
+    item = items[0];
+  });
+
+  afterAll(async () => {
+    await createTestUser();
+    await deleteTestTransactionItem();
+  });
+
+  it("should update a transaction item and return 200", async () => {
+    const updatedData = {
+      productId: 3,
+      quantity: 2,
+      unitPriceAtTransaction: 15000,
+      subtotal: 30000,
+    };
+
+    const response = await supertest(web).patch(`/api/transactions/${item.transactionId}/items/${item.id}`).set("Authorization", "testtoken123").send(updatedData);
+    expect(response.status).toBe(200);
+    expect(response.body).toHaveProperty("message", "Transaction item updated successfully");
   });
 });

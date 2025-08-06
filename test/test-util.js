@@ -82,24 +82,8 @@ export const createTestItemTransaction = async () => {
         unitPriceAtTransaction: 15000,
         subtotal: 30000,
       },
-      {
-        transactionId: 2,
-        productId: 2,
-        quantity: 1,
-        unitPriceAtTransaction: 20000,
-        subtotal: 20000,
-      },
-      {
-        transactionId: 2,
-        productId: 3,
-        quantity: 3,
-        unitPriceAtTransaction: 10000,
-        subtotal: 30000,
-      },
     ],
   });
-
-  // Query ulang untuk mendapatkan data yang baru dibuat
   return await prisma.transactionItem.findMany({
     where: {
       transactionId: 2,
@@ -107,7 +91,7 @@ export const createTestItemTransaction = async () => {
   });
 };
 
-export const deleteTestTransactionItem = async (id) => {
+export const deleteTestTransactionItem = async () => {
   await prisma.transactionItem.deleteMany({
     where: {
       transactionId: 2,

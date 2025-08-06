@@ -1,6 +1,6 @@
 import { prisma } from "../application/database";
 import { ResponseError } from "../error/response-error";
-import { transactionItemSchema } from "../validation/transactionItem-validation";
+import { singleTransactionItemSchema, transactionItemSchema } from "../validation/transactionItem-validation";
 import { validate } from "../validation/validation";
 
 const getTransactionItemsByTransactionId = async (id) => {
@@ -35,7 +35,37 @@ const postTransactionItems = async (transactionId, request) => {
   return createdItemsTransaction;
 };
 
+const updateTransactionItems = async (transactionId, transactionItemId, request) => {
+  const transactionItem = validate(singleTransactionItemSchema, request);
+
+  const existingItem = await prisma.transactionItem.findFirst({
+    where: {
+      id: transactionItemId,
+      transactionId: transactionId,
+    },
+  });
+
+  if (!existingItem) {
+    throw new ResponseError(404, "Transaction not found");
+  }
+
+  const updatedItem = await prisma.transactionItem.update({
+    where: {
+      id: transactionItemId,
+    },
+    data: {
+      productId: transactionItem.productId,
+      quantity: transactionItem.quantity,
+      unitPriceAtTransaction: transactionItem.unitPriceAtTransaction,
+      subtotal: transactionItem.subtotal,
+    },
+  });
+
+  return updatedItem;
+};
+
 export default {
   getTransactionItemsByTransactionId,
   postTransactionItems,
+  updateTransactionItems,
 };
