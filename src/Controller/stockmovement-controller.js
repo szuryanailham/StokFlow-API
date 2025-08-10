@@ -33,7 +33,18 @@ const getStockMovementByProduct = async (req, res, next) => {
   }
 };
 
+const getLowStockAlertsController = async (req, res, next) => {
+  try {
+    const alerts = await stockMovementService.getLowStockAlerts();
+    res.status(200).json(alerts);
+  } catch (error) {
+    console.log("Error in getLowStockAlertsController:", error);
+    next(error);
+  }
+};
+
 export default {
   getAllStockMovement,
   getStockMovementByProduct,
+  getLowStockAlertsController,
 };

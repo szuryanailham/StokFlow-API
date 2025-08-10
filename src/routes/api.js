@@ -13,7 +13,6 @@ userRouter.get("/api/products/:id", productController.getDetailProductById);
 userRouter.post("/api/products", productController.createNewProduct);
 userRouter.delete("/api/products/:id", productController.deleteProduct);
 userRouter.put("/api/products/:id", productController.updateProduct);
-userRouter.get("/api/stock-movements/low-stock-alerts", productController.getLowStockAlertsController);
 
 // transaction endpoint
 userRouter.get("/api/transactions", transctionController.getAllTransactions);
@@ -28,7 +27,9 @@ userRouter.post("/api/transactions/:id/items", transactionItemController.postNew
 userRouter.patch("/api/transactions/:transactionId/items/:itemId", transactionItemController.updateTransactionItemController);
 userRouter.delete("/api/transactions/:transactionId/items/:itemId", transactionItemController.deleteTransactionItemController);
 
-// transaction item endpoint
+// StokMovement endpoint
 userRouter.get("/api/stock-movements", stockmovementController.getAllStockMovement);
 userRouter.get("/api/products/:id/history", stockmovementController.getStockMovementByProduct);
+userRouter.get("/api/stock-movements/low-stock-alerts", stockmovementController.getLowStockAlertsController);
+
 export { userRouter };

@@ -96,3 +96,40 @@ describe("GET /api/products/:id/history", () => {
     expect(response.body).toHaveProperty("errors");
   });
 });
+
+describe("GET /api/stock-movements/low-stock-alerts", () => {
+  let product;
+  beforeEach(async () => {
+    await createTestUser();
+    // Arrange: create a product with low stock
+    product = await prisma.product.create({
+      data: {
+        sku: "lowstock123",
+        productName: "Test Product Low Stock",
+        description: "This is a low stock product for testing.",
+        purchasePrice: 1000,
+        sellingPrice: 1500,
+        currentStockQty: 2,
+        minStockThreshold: 5,
+      },
+    });
+  });
+
+  afterEach(async () => {
+    await removeTestUser();
+    await prisma.product.delete({
+      where: {
+        sku: "lowstock123",
+      },
+    });
+  });
+
+  it("should return an array of low stock alerts when products are below threshold", async () => {
+    const response = await supertest(web).get("/api/stock-movements/low-stock-alerts").set("Authorization", "testtoken123");
+    console.log(response.body);
+    expect(response.status).toBe(200);
+    expect(Array.isArray(response.body)).toBe(true);
+    expect(response.body.length).toBeGreaterThan(0);
+    expect(response.body[0]).toHaveProperty("productName", product.productName);
+  });
+});

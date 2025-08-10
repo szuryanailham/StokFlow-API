@@ -18,7 +18,18 @@ const getStokMovementByProduct = async (productId) => {
   });
 };
 
+const getLowStockAlerts = async () => {
+  return prisma.product.findMany({
+    where: {
+      currentStockQty: {
+        lt: prisma.product.fields.minStockThreshold,
+      },
+    },
+  });
+};
+
 export default {
   getAllStockMovement,
+  getLowStockAlerts,
   getStokMovementByProduct,
 };

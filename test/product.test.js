@@ -292,13 +292,5 @@ describe("POST /api/prodcuts", () => {
         expect(product.currentStockQty).toBeLessThanOrEqual(product.minStockThreshold);
       });
     });
-
-    // it("should return 401 if authorization token is missing", async () => {
-    //   await supertest(web).get("/api/stock-movements/low-stock-alerts").expect(401);
-    // });
-
-    // it("should return 401 if authorization token is invalid", async () => {
-    //   await supertest(web).get("/api/stock-movements/low-stock-alerts").set("Authorization", "invalidtoken").expect(401);
-    // });
   });
 });
