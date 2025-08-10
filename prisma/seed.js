@@ -1,4 +1,4 @@
-import { PrismaClient } from "@prisma/client";
+import { PrismaClient, MovementType } from "@prisma/client";
 import bcrypt from "bcrypt";
 
 const prisma = new PrismaClient();
@@ -27,7 +27,7 @@ async function main() {
   const hashedPassword = await bcrypt.hash("testpassword123", 10);
 
   // 3. Seed Users
-  await Promise.all([
+  const [admin, cashier, owner] = await Promise.all([
     prisma.user.upsert({
       where: { email: "admin@stokflow.com" },
       update: {},
@@ -64,6 +64,7 @@ async function main() {
   ]);
 
   // 4. Bersihkan data lama secara berurutan
+  await prisma.stockMovement.deleteMany();
   await prisma.transactionItem.deleteMany();
   await prisma.transaction.deleteMany();
   await prisma.product.deleteMany();
@@ -115,7 +116,7 @@ async function main() {
         buyerSellerName: "PT Sumber Rejeki",
         notes: "Pembelian stok awal",
         isDeleted: false,
-        userId: 2,
+        userId: cashier.id,
       },
       {
         id: 2,
@@ -125,34 +126,74 @@ async function main() {
         buyerSellerName: "PT Sumber Rejeki",
         notes: "Pembelian stok awal",
         isDeleted: false,
-        userId: 2,
+        userId: cashier.id,
       },
     ],
   });
 
   // 7. Seed Transaction Items
-  await prisma.transactionItem.createMany({
-    data: [
-      {
+  const transactionItems = await prisma.$transaction([
+    prisma.transactionItem.create({
+      data: {
         transactionId: 1,
         productId: 1,
         quantity: 2,
         unitPriceAtTransaction: 15000,
         subtotal: 30000,
       },
-      {
+    }),
+    prisma.transactionItem.create({
+      data: {
         transactionId: 1,
         productId: 1,
         quantity: 1,
         unitPriceAtTransaction: 20000,
         subtotal: 20000,
       },
-      {
+    }),
+    prisma.transactionItem.create({
+      data: {
         transactionId: 2,
         productId: 2,
         quantity: 3,
         unitPriceAtTransaction: 10000,
         subtotal: 30000,
+      },
+    }),
+  ]);
+
+  // 8. Seed StockMovements
+  await prisma.stockMovement.createMany({
+    data: [
+      {
+        productId: 1,
+        movementType: MovementType.IN,
+        quantityChanged: 2,
+        stockAfterMovement: 52,
+        reason: "Initial stock from transaction",
+        transactionItemId: transactionItems[0].id,
+        movementDate: new Date(),
+        userId: cashier.id,
+      },
+      {
+        productId: 1,
+        movementType: MovementType.IN,
+        quantityChanged: 1,
+        stockAfterMovement: 53,
+        reason: "Initial stock from transaction",
+        transactionItemId: transactionItems[1].id,
+        movementDate: new Date(),
+        userId: cashier.id,
+      },
+      {
+        productId: 2,
+        movementType: MovementType.IN,
+        quantityChanged: 3,
+        stockAfterMovement: 33,
+        reason: "Initial stock from transaction",
+        transactionItemId: transactionItems[2].id,
+        movementDate: new Date(),
+        userId: cashier.id,
       },
     ],
   });

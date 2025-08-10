@@ -85,7 +85,7 @@ model StockMovement {
   transactionItemId   Int?             @map("transaction_item_id")
   movementDate        DateTime         @default(now()) @map("movement_date")
   userId              Int?             @map("user_id")
-
+  createdAt     DateTime @default(now()) 
   product             Product          @relation(fields: [productId], references: [id])
   transactionItem     TransactionItem? @relation(fields: [transactionItemId], references: [id])
   user                User?            @relation(fields: [userId], references: [id])

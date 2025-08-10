@@ -98,9 +98,25 @@ const updateProductById = async (id, request) => {
   return updatedProduct;
 };
 
+const getLowStockAlerts = async () => {
+  return prisma.product.findMany({
+    where: {
+      currentStockQty: prisma.product.minStockThreshold,
+    },
+    select: {
+      id: true,
+      sku: true,
+      productName: true,
+      currentStockQty: true,
+      minStockThreshold: true,
+    },
+  });
+};
+
 export default {
   getAllProducts,
   updateProductById,
+  getLowStockAlerts,
   getDetailProductById,
   deleteProductById,
   PostNewProduct,

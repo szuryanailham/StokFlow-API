@@ -52,6 +52,7 @@ CREATE TABLE `Transaction` (
     `user_id` INTEGER NOT NULL,
     `created_at` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
     `updated_at` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+    `isDeleted` BOOLEAN NOT NULL DEFAULT false,
 
     UNIQUE INDEX `Transaction_transaction_code_key`(`transaction_code`),
     PRIMARY KEY (`id`)
@@ -80,6 +81,7 @@ CREATE TABLE `StockMovement` (
     `transaction_item_id` INTEGER NULL,
     `movement_date` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
     `user_id` INTEGER NULL,
+    `createdAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
 
     PRIMARY KEY (`id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;

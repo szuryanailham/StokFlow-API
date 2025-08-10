@@ -3,6 +3,7 @@ import productController from "../Controller/product-controller.js";
 import { authMiddleware } from "../middleware/auth-middleware.js";
 import transctionController from "../Controller/transaction-controller.js";
 import transactionItemController from "../Controller/transactionItem-controller.js";
+import stockmovementController from "../Controller/stockmovement-controller.js";
 
 const userRouter = express.Router();
 userRouter.use(authMiddleware);
@@ -12,6 +13,7 @@ userRouter.get("/api/products/:id", productController.getDetailProductById);
 userRouter.post("/api/products", productController.createNewProduct);
 userRouter.delete("/api/products/:id", productController.deleteProduct);
 userRouter.put("/api/products/:id", productController.updateProduct);
+userRouter.get("/api/stock-movements/low-stock-alerts", productController.getLowStockAlertsController);
 
 // transaction endpoint
 userRouter.get("/api/transactions", transctionController.getAllTransactions);
@@ -24,4 +26,9 @@ userRouter.delete("/api/transactions/:id", transctionController.deleteTransactio
 userRouter.get("/api/transactions/:id/items", transactionItemController.getItemTransactionByTransactionId);
 userRouter.post("/api/transactions/:id/items", transactionItemController.postNewItemTransaction);
 userRouter.patch("/api/transactions/:transactionId/items/:itemId", transactionItemController.updateTransactionItemController);
+userRouter.delete("/api/transactions/:transactionId/items/:itemId", transactionItemController.deleteTransactionItemController);
+
+// transaction item endpoint
+userRouter.get("/api/stock-movements", stockmovementController.getAllStockMovement);
+userRouter.get("/api/products/:id/history", stockmovementController.getStockMovementByProduct);
 export { userRouter };

@@ -14,7 +14,7 @@ export const createTestUser = async () => {
     where: { username: "test" },
   });
   const hashedPassword = await bcrypt.hash("rahasia", 10);
-  await prisma.user.create({
+  return await prisma.user.create({
     data: {
       username: "test",
       email: "test@example.com",
@@ -77,7 +77,7 @@ export const createTestItemTransaction = async () => {
     data: [
       {
         transactionId: 2,
-        productId: 1,
+        productId: 2,
         quantity: 2,
         unitPriceAtTransaction: 15000,
         subtotal: 30000,
@@ -96,5 +96,22 @@ export const deleteTestTransactionItem = async () => {
     where: {
       transactionId: 2,
     },
+  });
+};
+
+export const addTestDataStokMovements = async () => {
+  await prisma.stockMovement.createMany({
+    data: [
+      {
+        productId: 1,
+        movementType: MovementType.IN,
+        quantityChanged: 2,
+        stockAfterMovement: 52,
+        reason: "Initial stock from transaction",
+        transactionItemId: transactionItems[0].id,
+        movementDate: new Date(),
+        userId: cashier.id,
+      },
+    ],
   });
 };

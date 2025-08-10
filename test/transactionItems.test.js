@@ -142,4 +142,81 @@ describe("PATCH /api/transactions/:transactionId/items/:itemId", () => {
     expect(response.status).toBe(200);
     expect(response.body).toHaveProperty("message", "Transaction item updated successfully");
   });
+
+  it("should return 404 if item not found", async () => {
+    const fakeItemId = 99999;
+
+    const response = await supertest(web).patch(`/api/transactions/${item.transactionId}/items/${fakeItemId}`).set("Authorization", "testtoken123").send({
+      productId: 1,
+      quantity: 1,
+      unitPriceAtTransaction: 10000,
+      subtotal: 10000,
+    });
+
+    expect(response.status).toBe(404);
+    expect(response.body).toHaveProperty("errors", "Transaction item not found");
+  });
+
+  it("should return 404 if transaction not found", async () => {
+    const fakeTransactionId = 99999;
+
+    const response = await supertest(web).patch(`/api/transactions/${fakeTransactionId}/items/${item.id}`).set("Authorization", "testtoken123").send({
+      productId: 1,
+      quantity: 1,
+      unitPriceAtTransaction: 10000,
+      subtotal: 10000,
+    });
+
+    expect(response.status).toBe(404);
+    expect(response.body).toHaveProperty("errors", "Transaction not found");
+  });
+
+  it("should return 400 if request body is invalid", async () => {
+    const invalidData = {
+      productId: "invalid",
+      quantity: -1,
+      unitPriceAtTransaction: "not a number",
+      subtotal: null,
+    };
+
+    const response = await supertest(web).patch(`/api/transactions/${item.transactionId}/items/${item.id}`).set("Authorization", "testtoken123").send(invalidData);
+
+    expect(response.status).toBe(400);
+    expect(response.body).toHaveProperty("errors");
+  });
+});
+
+describe("DELETE /api/transactions/:transactionId/items/:itemId", () => {
+  let Testing;
+
+  beforeEach(async () => {
+    await createTestUser();
+    Testing = await createTestItemTransaction(); // ini mengembalikan array item
+  });
+
+  afterEach(async () => {
+    await removeTestUser();
+    await deleteTestTransactionItem();
+  });
+
+  it("Should delete a transaction item successfully", async () => {
+    const transactionId = Testing[0].transactionId;
+    const itemId = Testing[0].id;
+
+    const response = await supertest(web).delete(`/api/transactions/${transactionId}/items/${itemId}`).set("Authorization", "testtoken123");
+
+    console.log("Testing id:", itemId);
+    expect(response.status).toBe(200);
+    expect(response.body).toHaveProperty("message", "Transaction item deleted successfully");
+  });
+
+  it("Should return 404 if transaction item not found", async () => {
+    const transactionId = Testing[0].transactionId;
+    const nonExistentItemId = 999999;
+
+    const response = await supertest(web).delete(`/api/transactions/${transactionId}/items/${nonExistentItemId}`).set("Authorization", "testtoken123");
+
+    expect(response.status).toBe(404);
+    expect(response.body).toHaveProperty("errors", "Transaction item not found");
+  });
 });

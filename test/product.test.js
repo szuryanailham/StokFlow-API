@@ -1,6 +1,7 @@
 import supertest from "supertest";
 import { createTestUser, removeTestUser, removeTestProducts, createTestProduct } from "./test-util.js";
 import { web } from "../src/application/web.js";
+import { prisma } from "../src/application/database.js";
 
 const request = supertest(web);
 // ========================   GET ALL PRODUCT ==========================
@@ -260,5 +261,44 @@ describe("POST /api/prodcuts", () => {
       expect(response.status).toBe(401);
       expect(response.body.errors).toBeDefined();
     });
+  });
+
+  describe("GET /api/stock-movements/low-stock-alerts", () => {
+    beforeEach(async () => {
+      await createTestUser();
+      await prisma.product.createMany({
+        data: [
+          { sku: "sku1", productName: "Product 1", currentStockQty: 5, minStockThreshold: 10 },
+          { sku: "sku2", productName: "Product 2", currentStockQty: 20, minStockThreshold: 10 },
+        ],
+      });
+    });
+
+    afterEach(async () => {
+      await prisma.product.deleteMany({
+        where: {
+          sku: { in: ["sku1", "sku2"] },
+        },
+      });
+      await removeTestUser();
+    });
+
+    it("should return products with stock less or equal to minStockThreshold", async () => {
+      const response = await supertest(web).get("/api/stock-movements/low-stock-alerts").set("Authorization", "testtoken123").expect(200);
+
+      expect(Array.isArray(response.body)).toBe(true);
+
+      response.body.forEach((product) => {
+        expect(product.currentStockQty).toBeLessThanOrEqual(product.minStockThreshold);
+      });
+    });
+
+    // it("should return 401 if authorization token is missing", async () => {
+    //   await supertest(web).get("/api/stock-movements/low-stock-alerts").expect(401);
+    // });
+
+    // it("should return 401 if authorization token is invalid", async () => {
+    //   await supertest(web).get("/api/stock-movements/low-stock-alerts").set("Authorization", "invalidtoken").expect(401);
+    // });
   });
 });

@@ -38,15 +38,24 @@ const postTransactionItems = async (transactionId, request) => {
 const updateTransactionItems = async (transactionId, transactionItemId, request) => {
   const transactionItem = validate(singleTransactionItemSchema, request);
 
-  const existingItem = await prisma.transactionItem.findFirst({
-    where: {
-      id: transactionItemId,
-      transactionId: transactionId,
-    },
+  const transactionExists = await prisma.transaction.findUnique({
+    where: { id: transactionId },
+  });
+
+  if (!transactionExists) {
+    const error = new Error("Transaction not found");
+    throw new ResponseError(404, "Transaction not found");
+  }
+  const existingItem = await prisma.transactionItem.findUnique({
+    where: { id: transactionItemId },
   });
 
   if (!existingItem) {
-    throw new ResponseError(404, "Transaction not found");
+    throw new ResponseError(404, "Transaction item not found");
+  }
+
+  if (existingItem.transactionId !== transactionId) {
+    throw new ResponseError(404, "Transaction item does not belong to the specified transaction");
   }
 
   const updatedItem = await prisma.transactionItem.update({
@@ -64,8 +73,36 @@ const updateTransactionItems = async (transactionId, transactionItemId, request)
   return updatedItem;
 };
 
+const deleteTransactionItems = async (transactionId, transactionItemId) => {
+  const transactionExists = await prisma.transaction.findUnique({
+    where: { id: transactionId },
+  });
+  if (!transactionExists) {
+    throw new ResponseError(404, "Transaction not found");
+  }
+
+  const existingItem = await prisma.transactionItem.findUnique({
+    where: { id: transactionItemId },
+  });
+
+  if (!existingItem) {
+    throw new ResponseError(404, "Transaction item not found");
+  }
+
+  if (existingItem.transactionId !== transactionId) {
+    throw new ResponseError(404, "Transaction item does not belong to the specified transaction");
+  }
+
+  const deletedItem = await prisma.transactionItem.delete({
+    where: { id: transactionItemId },
+  });
+
+  return deletedItem;
+};
+
 export default {
   getTransactionItemsByTransactionId,
   postTransactionItems,
   updateTransactionItems,
+  deleteTransactionItems,
 };
