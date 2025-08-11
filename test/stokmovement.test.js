@@ -3,7 +3,6 @@ import supertest from "supertest";
 import { addTestDataStokMovements, createTestUser, removeTestUser } from "./test-util.js";
 import { web } from "../src/application/web.js";
 import { prisma } from "../src/application/database.js";
-import stockmovementService from "../src/service/stockmovement-service.js";
 
 describe("GET /api/stock-movements", () => {
   let userData;

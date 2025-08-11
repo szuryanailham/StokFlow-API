@@ -3,23 +3,38 @@ import bcrypt from "bcrypt";
 
 export const removeTestUser = async () => {
   await prisma.user.deleteMany({
-    where: {
-      username: "test",
-    },
+    where: { username: "test" },
   });
 };
+
+// export const createTestUser = async () => {
+//   await prisma.user.deleteMany({
+//     where: { username: "test" },
+//   });
+//   const hashedPassword = await bcrypt.hash("rahasia", 10);
+//   return await prisma.user.create({
+//     data: {
+//       username: "test",
+//       email: "test@example.com",
+//       password: hashedPassword,
+//       token: "testtoken123",
+//       roleId: 1,
+//     },
+//   });
+// };
 
 export const createTestUser = async () => {
   await prisma.user.deleteMany({
     where: { username: "test" },
   });
+
   const hashedPassword = await bcrypt.hash("rahasia", 10);
+
   return await prisma.user.create({
     data: {
       username: "test",
       email: "test@example.com",
       password: hashedPassword,
-      token: "testtoken123",
       roleId: 1,
     },
   });

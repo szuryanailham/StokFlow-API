@@ -2,8 +2,8 @@ import { prisma } from "../application/database.js";
 import { loginValidated } from "../validation/user-validation.js";
 import { validate } from "../validation/validation.js";
 import { ResponseError } from "../error/response-error.js";
-import { v4 as uuid } from "uuid";
 import bcrypt from "bcrypt";
+import { generateToken } from "../utils/jwt.js";
 
 const login = async (request) => {
   const validateLoginInput = validate(loginValidated, request);
@@ -28,21 +28,17 @@ const login = async (request) => {
     throw new ResponseError(401, "Username or Password Wrong");
   }
 
-  const token = uuid().toString();
+  const token = generateToken({ id: user.id, email: user.email });
 
-  const updatedUser = await prisma.user.update({
-    data: {
-      token: token,
-    },
-    where: {
+  return {
+    message: "Login successful",
+    token,
+    user: {
+      id: user.id,
       email: user.email,
+      name: user.name,
     },
-    select: {
-      token: true,
-    },
-  });
-
-  return updatedUser;
+  };
 };
 
 export default {

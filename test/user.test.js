@@ -1,6 +1,6 @@
 import supertest from "supertest";
+import jwt from "jsonwebtoken";
 import { web } from "../src/application/web.js";
-
 import { createTestUser, removeTestUser } from "./test-util.js";
 import { logger } from "../src/application/logging.js";
 
@@ -13,8 +13,7 @@ describe("POST /api/users/login", function () {
     await removeTestUser();
   });
 
-  // IF TESTING IS SUCCESFULLY ....
-  it("Should be able to login", async () => {
+  it("Should be able to login and get JWT token", async () => {
     const response = await supertest(web).post("/api/users/login").send({
       email: "test@example.com",
       password: "rahasia",
@@ -23,6 +22,7 @@ describe("POST /api/users/login", function () {
     logger.info(response.body);
     expect(response.status).toBe(200);
     expect(response.body.data.token).toBeDefined();
-    expect(response.body.data.token).not.toBe("test");
+    expect(typeof response.body.data.token).toBe("string");
+    expect(response.body.data.token.split(".").length).toBe(3);
   });
 });
