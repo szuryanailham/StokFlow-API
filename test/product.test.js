@@ -6,8 +6,11 @@ import { prisma } from "../src/application/database.js";
 const request = supertest(web);
 // ========================   GET ALL PRODUCT ==========================
 describe("GET /api/products", () => {
+  let token;
+
   beforeEach(async () => {
-    await createTestUser();
+    const result = await createTestUser();
+    token = result.token;
   });
 
   afterEach(async () => {
@@ -15,16 +18,20 @@ describe("GET /api/products", () => {
   });
 
   it("Should return first page with default limit", async () => {
-    const res = await supertest(web).get("/api/products?page=1&limit=10").set("Authorization", "testtoken123");
+    const res = await supertest(web).get("/api/products?page=1&limit=10").set("Authorization", `Bearer ${token}`);
+
     expect(res.status).toBe(200);
     expect(Array.isArray(res.body.data.products)).toBe(true);
     expect(res.body.data.products.length).toBeLessThanOrEqual(10);
   });
 });
+
 // ========================   CREATE NEW PRODUCT ==========================
 describe("POST /api/prodcuts", () => {
+  let token;
   beforeEach(async () => {
-    await createTestUser();
+    const result = await createTestUser();
+    token = result.token;
   });
 
   afterEach(async () => {
@@ -33,7 +40,7 @@ describe("POST /api/prodcuts", () => {
   });
 
   it("Should Create New Products", async () => {
-    const response = await supertest(web).post("/api/products").set("Authorization", "testtoken123").send({
+    const response = await supertest(web).post("/api/products").set("Authorization", `Bearer ${token}`).send({
       sku: "test12345",
       productName: "Test Product 1",
       description: "This is a test product",
@@ -50,7 +57,7 @@ describe("POST /api/prodcuts", () => {
   });
 
   it("Should return 400 if required field is missing", async () => {
-    const response = await supertest(web).post("/api/products").set("Authorization", "testtoken123").send({
+    const response = await supertest(web).post("/api/products").set("Authorization", `Bearer ${token}`).send({
       productName: "Invalid Product",
       purchasePrice: 10000.0,
       sellingPrice: 12000.0,
@@ -63,7 +70,7 @@ describe("POST /api/prodcuts", () => {
   });
 
   it("Should return 400 if field is empty", async () => {
-    const response = await supertest(web).post("/api/products").set("Authorization", "testtoken123").send({
+    const response = await supertest(web).post("/api/products").set("Authorization", `Bearer ${token}`).send({
       sku: "",
       productName: "",
       purchasePrice: 10000.0,
@@ -78,7 +85,7 @@ describe("POST /api/prodcuts", () => {
 
   it("Should return 409 if SKU already exists", async () => {
     // Buat produk pertama
-    await supertest(web).post("/api/products").set("Authorization", "testtoken123").send({
+    await supertest(web).post("/api/products").set("Authorization", `Bearer ${token}`).send({
       sku: "duplikatSKU",
       productName: "Produk A",
       purchasePrice: 10000.0,
@@ -87,7 +94,7 @@ describe("POST /api/prodcuts", () => {
       minStockThreshold: 5,
     });
 
-    const response = await supertest(web).post("/api/products").set("Authorization", "testtoken123").send({
+    const response = await supertest(web).post("/api/products").set("Authorization", `Bearer ${token}`).send({
       sku: "duplikatSKU",
       productName: "Produk B",
       purchasePrice: 15000.0,
@@ -100,7 +107,7 @@ describe("POST /api/prodcuts", () => {
   });
 
   it("Should return 400 if purchasePrice is not a number", async () => {
-    const response = await supertest(web).post("/api/products").set("Authorization", "testtoken123").send({
+    const response = await supertest(web).post("/api/products").set("Authorization", `Bearer ${token}`).send({
       sku: "testsku999",
       productName: "Produk Invalid",
       purchasePrice: "bukan angka",
@@ -114,7 +121,7 @@ describe("POST /api/prodcuts", () => {
   });
 
   it("Should return 400 if extra field is provided", async () => {
-    const response = await supertest(web).post("/api/products").set("Authorization", "testtoken123").send({
+    const response = await supertest(web).post("/api/products").set("Authorization", `Bearer ${token}`).send({
       sku: "test-extra123",
       productName: "Produk Ekstra",
       purchasePrice: 10000.0,
@@ -142,13 +149,15 @@ describe("POST /api/prodcuts", () => {
     expect(response.body.errors).toMatch("Unauthorized");
   });
 
-  // ========================   DETAIL PRODUCT ==========================
+  // // ========================   DETAIL PRODUCT ==========================
 
   describe("GET /api/products/:id", () => {
     let testProduct;
+    let token;
 
     beforeEach(async () => {
-      await createTestUser();
+      const result = await createTestUser();
+      token = result.token;
       testProduct = await createTestProduct();
     });
 
@@ -158,7 +167,7 @@ describe("POST /api/prodcuts", () => {
     });
 
     it("should return 200 and product detail for valid ID", async () => {
-      const response = await request.get(`/api/products/${testProduct.id}`).set("Authorization", `testtoken123`);
+      const response = await request.get(`/api/products/${testProduct.id}`).set("Authorization", `Bearer ${token}`);
       expect(response.status).toBe(200);
       expect(response.body.data.product).toBeDefined(); // singular
       expect(response.body.data.product.id).toBe(testProduct.id);
@@ -167,19 +176,20 @@ describe("POST /api/prodcuts", () => {
 
     it("should return 404 if product is not found", async () => {
       const nonExistingId = "999999";
-      const response = await request.get(`/api/products/${nonExistingId}`).set("Authorization", `testtoken123`);
+      const response = await request.get(`/api/products/${nonExistingId}`).set("Authorization", `Bearer ${token}`);
 
       expect(response.status).toBe(404);
       expect(response.body.errors).toMatch(/not found/i);
     });
   });
 
-  // ========================   DELETE PRODUCT ==========================
+  // // ========================   DELETE PRODUCT ==========================
   describe("DELETE /api/products/:id", () => {
     let testProduct;
-
+    let token;
     beforeEach(async () => {
-      await createTestUser();
+      const result = await createTestUser();
+      token = result.token;
       testProduct = await createTestProduct();
     });
 
@@ -188,7 +198,7 @@ describe("POST /api/prodcuts", () => {
     });
 
     it("should return 200 and delete the product for valid ID", async () => {
-      const response = await request.delete(`/api/products/${testProduct.id}`).set("Authorization", "testtoken123");
+      const response = await request.delete(`/api/products/${testProduct.id}`).set("Authorization", `Bearer ${token}`);
 
       expect(response.status).toBe(200);
       expect(response.body.data.product).toBeDefined();
@@ -197,18 +207,20 @@ describe("POST /api/prodcuts", () => {
 
     it("should return 404 if product to delete is not found", async () => {
       const nonExistingId = "999999";
-      const response = await request.delete(`/api/products/${nonExistingId}`).set("Authorization", "testtoken123");
+      const response = await request.delete(`/api/products/${nonExistingId}`).set("Authorization", `Bearer ${token}`);
       expect(response.status).toBe(404);
       expect(response.body.errors).toMatch(/not found/i);
     });
   });
 
-  // ========================   UPDATE PRODUCT ==========================
+  // // ========================   UPDATE PRODUCT ==========================
   describe("DELETE /api/products/:id", () => {
     let testProduct;
+    let token;
 
     beforeEach(async () => {
-      await createTestUser();
+      const result = await createTestUser();
+      token = result.token;
       testProduct = await createTestProduct();
     });
 
@@ -217,7 +229,7 @@ describe("POST /api/prodcuts", () => {
       await removeTestProducts();
     });
     it("Should Update Product by ID", async () => {
-      const response = await supertest(web).put(`/api/products/${testProduct.id}`).set("Authorization", "testtoken123").send({
+      const response = await supertest(web).put(`/api/products/${testProduct.id}`).set("Authorization", `Bearer ${token}`).send({
         sku: "test12345",
         productName: "Test Product PUT 1",
         description: "This is a test product",
@@ -236,7 +248,7 @@ describe("POST /api/prodcuts", () => {
     });
 
     it("Should return error if product not found", async () => {
-      const response = await supertest(web).put("/api/products/999999").set("Authorization", "testtoken123").send({
+      const response = await supertest(web).put("/api/products/999999").set("Authorization", `Bearer ${token}`).send({
         sku: "sku-error",
         productName: "Should Fail",
         description: "No product with this ID",
@@ -264,8 +276,10 @@ describe("POST /api/prodcuts", () => {
   });
 
   describe("GET /api/stock-movements/low-stock-alerts", () => {
+    let token;
     beforeEach(async () => {
-      await createTestUser();
+      const result = await createTestUser();
+      token = result.token;
       await prisma.product.createMany({
         data: [
           { sku: "sku1", productName: "Product 1", currentStockQty: 5, minStockThreshold: 10 },
@@ -284,7 +298,7 @@ describe("POST /api/prodcuts", () => {
     });
 
     it("should return products with stock less or equal to minStockThreshold", async () => {
-      const response = await supertest(web).get("/api/stock-movements/low-stock-alerts").set("Authorization", "testtoken123").expect(200);
+      const response = await supertest(web).get("/api/stock-movements/low-stock-alerts").set("Authorization", `Bearer ${token}`).expect(200);
 
       expect(Array.isArray(response.body)).toBe(true);
 
@@ -292,5 +306,38 @@ describe("POST /api/prodcuts", () => {
         expect(product.currentStockQty).toBeLessThanOrEqual(product.minStockThreshold);
       });
     });
+  });
+});
+
+// ===================== AUDIT STOK PRODUCT ========================
+
+describe("GET /api/audit-stock", () => {
+  let token;
+
+  beforeEach(async () => {
+    const result = await createTestUser();
+    token = result.token;
+  });
+
+  afterEach(async () => {
+    await removeTestUser();
+  });
+
+  it("Should return audit stock data with default limit", async () => {
+    const res = await supertest(web).get("/api/audit-stock?page=1&limit=10").set("Authorization", `Bearer ${token}`);
+    console.log(res.body);
+    expect(res.status).toBe(200);
+
+    expect(Array.isArray(res.body.data)).toBe(true); // assuming API returns array directly
+    expect(res.body.data.length).toBeLessThanOrEqual(10);
+
+    // Optional: check structure of first item
+    if (res.body.data.length > 0) {
+      const firstItem = res.body.data[0];
+      expect(firstItem).toHaveProperty("sku");
+      expect(firstItem).toHaveProperty("productName");
+      expect(firstItem).toHaveProperty("currentStockQty");
+      expect(firstItem).toHaveProperty("minStockThreshold");
+    }
   });
 });

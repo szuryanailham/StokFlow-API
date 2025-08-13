@@ -5,10 +5,11 @@ import { web } from "../src/application/web.js";
 import { prisma } from "../src/application/database.js";
 
 describe("GET /api/stock-movements", () => {
-  let userData;
+  let token;
 
   beforeEach(async () => {
-    userData = await createTestUser();
+    const result = await createTestUser();
+    token = result.token;
     await prisma.stockMovement.createMany({
       data: [
         {
@@ -40,7 +41,7 @@ describe("GET /api/stock-movements", () => {
   });
 
   it("should return all stock movements with default pagination", async () => {
-    const response = await supertest(web).get("/api/stock-movements?limit=10&offset=0").set("Authorization", "testtoken123");
+    const response = await supertest(web).get("/api/stock-movements?limit=10&offset=0").set("Authorization", `Bearer ${token}`);
 
     expect(response.status).toBe(200);
     expect(Array.isArray(response.body.data)).toBe(true);
@@ -48,7 +49,7 @@ describe("GET /api/stock-movements", () => {
   });
 
   it("should return 401 if token is invalid", async () => {
-    const response = await supertest(web).get("/api/stock-movements?limit=10&offset=0").set("Authorization", "Bearer invalidtoken123");
+    const response = await supertest(web).get("/api/stock-movements?limit=10&offset=0").set("Authorization", `Bearer invalidtoken123`);
     console.log(response.body);
     expect(response.status).toBe(401);
     expect(response.body.errors).toMatch(/Unauthorized|token/i);
@@ -56,8 +57,10 @@ describe("GET /api/stock-movements", () => {
 });
 
 describe("GET /api/products/:id/history", () => {
+  let token;
   beforeEach(async () => {
-    await createTestUser();
+    const result = await createTestUser();
+    token = result.token;
   });
 
   afterEach(async () => {
@@ -66,17 +69,14 @@ describe("GET /api/products/:id/history", () => {
   });
 
   it("should return an array of stock movements for the given product ID", async () => {
-    const response = await supertest(web).get("/api/products/1/history").set("Authorization", "testtoken123");
+    const response = await supertest(web).get("/api/products/1/history").set("Authorization", `Bearer ${token}`);
 
     expect(response.status).toBe(200);
     expect(Array.isArray(response.body)).toBe(true);
   });
 
   it("should return 404 if product ID does not exist", async () => {
-    const response = await supertest(web)
-      .get("/api/products/999999/history") // assuming this ID doesn't exist
-      .set("Authorization", "testtoken123");
-
+    const response = await supertest(web).get("/api/products/999999/history").set("Authorization", "testtoken123").set("Authorization", `Bearer ${token}`);
     expect(response.status).toBe(404);
     expect(response.body).toHaveProperty("errors");
   });
@@ -89,7 +89,7 @@ describe("GET /api/products/:id/history", () => {
   });
 
   it("should return 401 if authorization token is invalid", async () => {
-    const response = await supertest(web).get("/api/products/1/history").set("Authorization", "invalidtoken");
+    const response = await supertest(web).get("/api/products/1/history").set("Authorization", `Bearer invalidToken`);
 
     expect(response.status).toBe(401);
     expect(response.body).toHaveProperty("errors");
@@ -98,8 +98,10 @@ describe("GET /api/products/:id/history", () => {
 
 describe("GET /api/stock-movements/low-stock-alerts", () => {
   let product;
+  let token;
   beforeEach(async () => {
-    await createTestUser();
+    const result = await createTestUser();
+    token = result.token;
     // Arrange: create a product with low stock
     product = await prisma.product.create({
       data: {
@@ -124,7 +126,7 @@ describe("GET /api/stock-movements/low-stock-alerts", () => {
   });
 
   it("should return an array of low stock alerts when products are below threshold", async () => {
-    const response = await supertest(web).get("/api/stock-movements/low-stock-alerts").set("Authorization", "testtoken123");
+    const response = await supertest(web).get("/api/stock-movements/low-stock-alerts").set("Authorization", `Bearer ${token}`);
     console.log(response.body);
     expect(response.status).toBe(200);
     expect(Array.isArray(response.body)).toBe(true);

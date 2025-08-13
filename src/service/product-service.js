@@ -113,11 +113,47 @@ const getLowStockAlerts = async () => {
   });
 };
 
+export const getAuditStock = async (page = 1, limit = 10) => {
+  const pageNumber = Math.max(parseInt(page), 1);
+  const limitNumber = Math.max(parseInt(limit), 1);
+  const skip = (pageNumber - 1) * limitNumber;
+
+  const totalItems = await prisma.product.count();
+  const products = await prisma.product.findMany({
+    skip,
+    take: limitNumber,
+    select: {
+      id: true,
+      sku: true,
+      productName: true,
+      currentStockQty: true,
+      minStockThreshold: true,
+      createdAt: true,
+      updatedAt: true,
+    },
+  });
+  const data = products.map((p) => ({
+    ...p,
+    belowThreshold: p.currentStockQty < p.minStockThreshold,
+    discrepancy: null,
+    auditDate: new Date(),
+  }));
+
+  return {
+    page: pageNumber,
+    limit: limitNumber,
+    totalItems,
+    totalPages: Math.ceil(totalItems / limitNumber),
+    data,
+  };
+};
+
 export default {
   getAllProducts,
   updateProductById,
   getLowStockAlerts,
   getDetailProductById,
+  getAuditStock,
   deleteProductById,
   PostNewProduct,
 };

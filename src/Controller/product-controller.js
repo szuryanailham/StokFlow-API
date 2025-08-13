@@ -92,10 +92,28 @@ const updateProduct = async (req, res, next) => {
   }
 };
 
+export const auditStockHandler = async (req, res, next) => {
+  try {
+    const { page = 1, limit = 10 } = req.query;
+    const pageNumber = parseInt(page, 10);
+    const limitNumber = parseInt(limit, 10);
+
+    const auditData = await productService.getAuditStock(pageNumber, limitNumber);
+
+    res.status(200).json({
+      status: "success",
+      ...auditData,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
 export default {
   deleteProduct,
   getAllProducts,
   getDetailProductById,
+  auditStockHandler,
   updateProduct,
   createNewProduct,
 };

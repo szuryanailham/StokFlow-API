@@ -3,8 +3,10 @@ import { createTestTransaction, createTestUser, deleteTestTransaction, removeTes
 import { web } from "../src/application/web.js";
 
 describe("GET /api/transactions", () => {
+  let token;
   beforeEach(async () => {
-    await createTestUser();
+    const result = await createTestUser();
+    token = result.token;
   });
 
   afterEach(async () => {
@@ -12,7 +14,7 @@ describe("GET /api/transactions", () => {
   });
 
   it("Should return first page with defaul as ksdmhs s t limit", async () => {
-    const res = await supertest(web).get("/api/transactions?page=1&limit=10").set("Authorization", "testtoken123");
+    const res = await supertest(web).get("/api/transactions?page=1&limit=10").set("Authorization", `Bearer ${token}`);
     expect(res.status).toBe(200);
     expect(Array.isArray(res.body.data.transactions)).toBe(true); //
     expect(res.body.data.transactions.length).toBeLessThanOrEqual(10);
@@ -20,8 +22,10 @@ describe("GET /api/transactions", () => {
 });
 
 describe("POST /api/transactions/create", () => {
+  let token;
   beforeEach(async () => {
-    await createTestUser();
+    const result = await createTestUser();
+    token = result.token;
     await createTestTransaction();
   });
 
@@ -32,7 +36,7 @@ describe("POST /api/transactions/create", () => {
   it("Should Create New Transaction", async () => {
     const randomCode = `TEST-${Date.now()}-${Math.floor(Math.random() * 1000)}`;
 
-    const res = await supertest(web).post("/api/transactions/create").set("Authorization", "testtoken123").send({
+    const res = await supertest(web).post("/api/transactions/create").set("Authorization", `Bearer ${token}`).send({
       transactionCode: randomCode,
       transactionType: "SALE",
       totalAmount: 200000.0,
@@ -60,7 +64,7 @@ describe("POST /api/transactions/create", () => {
   });
 
   it("❌ Should Fail When Required Field is Missing", async () => {
-    const res = await supertest(web).post("/api/transactions/create").set("Authorization", "testtoken123").send({
+    const res = await supertest(web).post("/api/transactions/create").set("Authorization", `Bearer ${token}`).send({
       transactionType: "SALE",
       totalAmount: 200000.0,
       buyerSellerName: "Testing-user",
@@ -73,7 +77,7 @@ describe("POST /api/transactions/create", () => {
   });
 
   it("❌ Should Fail When transactionCode is Duplicated", async () => {
-    const res = await supertest(web).post("/api/transactions/create").set("Authorization", "testtoken123").send({
+    const res = await supertest(web).post("/api/transactions/create").set("Authorization", `Bearer ${token}`).send({
       transactionCode: "test-duplicate123",
       transactionType: "SALE",
       totalAmount: 200000.0,
@@ -87,7 +91,7 @@ describe("POST /api/transactions/create", () => {
   });
 
   it("❌ Should Fail When userId is Invalid", async () => {
-    const res = await supertest(web).post("/api/transactions/create").set("Authorization", "testtoken123").send({
+    const res = await supertest(web).post("/api/transactions/create").set("Authorization", `Bearer ${token}`).send({
       transactionCode: "test-12345",
       transactionType: "SALE",
       totalAmount: 200000.0,
@@ -102,9 +106,11 @@ describe("POST /api/transactions/create", () => {
 });
 
 describe("PATCH /api/transactions/:id", () => {
+  let token;
   let testTransaction;
   beforeEach(async () => {
-    await createTestUser();
+    const result = await createTestUser();
+    token = result.token;
     testTransaction = await createTestTransaction();
   });
 
@@ -114,7 +120,7 @@ describe("PATCH /api/transactions/:id", () => {
   });
 
   it("Should update the transaction by ID", async () => {
-    const response = await supertest(web).patch(`/api/transactions/${testTransaction.id}`).set("Authorization", "testtoken123").send({
+    const response = await supertest(web).patch(`/api/transactions/${testTransaction.id}`).set("Authorization", `Bearer ${token}`).send({
       buyerSellerName: "Updated Buyer",
       notes: "Updated notes paragraph",
     });
@@ -129,7 +135,7 @@ describe("PATCH /api/transactions/:id", () => {
 
   it("❌ Should return 404 if transaction not found", async () => {
     const invalidId = 999999;
-    const response = await supertest(web).patch(`/api/transactions/${invalidId}`).set("Authorization", "testtoken123").send({
+    const response = await supertest(web).patch(`/api/transactions/${invalidId}`).set("Authorization", `Bearer ${token}`).send({
       buyerSellerName: "Doesn't Matter",
       notes: "Doesn't Matter",
     });
@@ -139,7 +145,7 @@ describe("PATCH /api/transactions/:id", () => {
   });
 
   it("❌ Should return 400 if validation fails", async () => {
-    const response = await supertest(web).patch(`/api/transactions/${testTransaction.id}`).set("Authorization", "testtoken123").send({
+    const response = await supertest(web).patch(`/api/transactions/${testTransaction.id}`).set("Authorization", `Bearer ${token}`).send({
       buyerSellerName: 123, // salah tipe data
       notes: null,
     });
@@ -160,8 +166,10 @@ describe("PATCH /api/transactions/:id", () => {
 });
 
 describe("GET /api/transactions/:id", () => {
+  let token;
   beforeEach(async () => {
-    await createTestUser();
+    const result = await createTestUser();
+    token = result.token;
     testTransaction = await createTestTransaction();
   });
 
@@ -171,7 +179,7 @@ describe("GET /api/transactions/:id", () => {
   });
 
   it("✅ Should return transaction detail by ID", async () => {
-    const response = await supertest(web).get(`/api/transactions/${testTransaction.id}`).set("Authorization", "testtoken123");
+    const response = await supertest(web).get(`/api/transactions/${testTransaction.id}`).set("Authorization", `Bearer ${token}`);
 
     expect(response.status).toBe(200);
     expect(response.body).toHaveProperty("data");
@@ -184,7 +192,7 @@ describe("GET /api/transactions/:id", () => {
 
   it("❌ Should return 404 if transaction not found", async () => {
     const invalidId = 999999;
-    const response = await supertest(web).get(`/api/transactions/${invalidId}`).set("Authorization", "testtoken123");
+    const response = await supertest(web).get(`/api/transactions/${invalidId}`).set("Authorization", `Bearer ${token}`);
 
     expect(response.status).toBe(404);
     expect(response.body).toHaveProperty("errors", "Transaction not found");
@@ -199,8 +207,10 @@ describe("GET /api/transactions/:id", () => {
 });
 
 describe("DELETE /api/transactions/:id", () => {
+  let token;
   beforeEach(async () => {
-    await createTestUser();
+    const result = await createTestUser();
+    token = result.token;
     testTransaction = await createTestTransaction();
   });
 
@@ -210,7 +220,7 @@ describe("DELETE /api/transactions/:id", () => {
   });
 
   it("✅ Should delete transaction by ID", async () => {
-    const response = await supertest(web).delete(`/api/transactions/${testTransaction.id}`).set("Authorization", "testtoken123");
+    const response = await supertest(web).delete(`/api/transactions/${testTransaction.id}`).set("Authorization", `Bearer ${token}`);
     console.log(response.body);
     expect(response.status).toBe(200);
   });

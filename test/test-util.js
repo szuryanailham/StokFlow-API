@@ -1,6 +1,6 @@
 import { prisma } from "../src/application/database.js";
 import bcrypt from "bcrypt";
-
+import jwt from "jsonwebtoken";
 export const removeTestUser = async () => {
   await prisma.user.deleteMany({
     where: { username: "test" },
@@ -29,8 +29,7 @@ export const createTestUser = async () => {
   });
 
   const hashedPassword = await bcrypt.hash("rahasia", 10);
-
-  return await prisma.user.create({
+  const user = await prisma.user.create({
     data: {
       username: "test",
       email: "test@example.com",
@@ -38,6 +37,11 @@ export const createTestUser = async () => {
       roleId: 1,
     },
   });
+
+  // Create JWT
+  const token = jwt.sign({ id: user.id, username: user.username }, process.env.JWT_SECRET || "secret", { expiresIn: "1h" });
+
+  return { user, token };
 };
 
 export const createTestProduct = async () => {
