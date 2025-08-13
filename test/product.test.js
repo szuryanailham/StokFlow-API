@@ -19,7 +19,6 @@ describe("GET /api/products", () => {
 
   it("Should return first page with default limit", async () => {
     const res = await supertest(web).get("/api/products?page=1&limit=10").set("Authorization", `Bearer ${token}`);
-
     expect(res.status).toBe(200);
     expect(Array.isArray(res.body.data.products)).toBe(true);
     expect(res.body.data.products.length).toBeLessThanOrEqual(10);

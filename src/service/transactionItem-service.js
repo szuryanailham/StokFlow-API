@@ -1,7 +1,7 @@
-import { prisma } from "../application/database";
-import { ResponseError } from "../error/response-error";
-import { singleTransactionItemSchema, transactionItemSchema } from "../validation/transactionItem-validation";
-import { validate } from "../validation/validation";
+import { prisma } from "../application/database.js";
+import { ResponseError } from "../error/response-error.js";
+import { singleTransactionItemSchema, transactionItemSchema } from "../validation/transactionItem-validation.js";
+import { validate } from "../validation/validation.js";
 
 const getTransactionItemsByTransactionId = async (id) => {
   const itemTransactions = await prisma.transactionItem.findMany({

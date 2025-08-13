@@ -1,7 +1,7 @@
-import { prisma } from "../application/database";
-import { ResponseError } from "../error/response-error";
-import { transactionValidated, updateTransactionValidated } from "../validation/transaction-validation";
-import { validate } from "../validation/validation";
+import { prisma } from "../application/database.js";
+import { ResponseError } from "../error/response-error.js";
+import { transactionValidated, updateTransactionValidated } from "../validation/transaction-validation.js";
+import { validate } from "../validation/validation.js";
 
 //  ======== Get all transactions with pagination (limit & offset) ===========
 const getAllTransactions = async ({ limit, offset }) => {

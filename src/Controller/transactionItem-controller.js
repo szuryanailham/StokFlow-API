@@ -1,6 +1,6 @@
 import { request } from "express";
-import { prisma } from "../application/database";
-import transactionItemService from "../service/transactionItem-service";
+import { prisma } from "../application/database.js";
+import transactionItemService from "../service/transactionItem-service.js";
 const getItemTransactionByTransactionId = async (req, res, next) => {
   try {
     const transactionId = parseInt(req.params.id);

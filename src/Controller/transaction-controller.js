@@ -1,4 +1,4 @@
-import transactionService from "../service/transactions-service";
+import transactionService from "../service/transactions-service.js";
 
 const getAllTransactions = async (req, res, next) => {
   try {

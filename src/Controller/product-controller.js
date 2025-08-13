@@ -1,4 +1,4 @@
-import productService from "../service/product-service";
+import productService from "../service/product-service.js";
 const getAllProducts = async (req, res, next) => {
   try {
     const page = Math.max(parseInt(req.query.page) || 1, 1);

@@ -1,5 +1,4 @@
-import { empty } from "@prisma/client/runtime/library";
-import stockMovementService from "../service/stockmovement-service";
+import stockMovementService from "../service/stockmovement-service.js";
 
 const getAllStockMovement = async (req, res, next) => {
   try {
