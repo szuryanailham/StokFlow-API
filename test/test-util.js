@@ -39,7 +39,11 @@ export const createTestUser = async () => {
   });
 
   // Create JWT
-  const token = jwt.sign({ id: user.id, username: user.username }, process.env.JWT_SECRET || "secret", { expiresIn: "1h" });
+  const token = jwt.sign(
+    { id: user.id, username: user.username, email: user.email }, // tambahkan email
+    process.env.JWT_SECRET || "secret",
+    { expiresIn: "1h" }
+  );
 
   return { user, token };
 };

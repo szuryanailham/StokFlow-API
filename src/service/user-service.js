@@ -13,6 +13,7 @@ const login = async (request) => {
       email: validateLoginInput.email,
     },
     select: {
+      id: true,
       email: true,
       password: true,
     },

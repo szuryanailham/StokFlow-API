@@ -25,7 +25,7 @@ describe("GET /api/products", () => {
   });
 });
 
-// ========================   CREATE NEW PRODUCT ==========================
+// // ========================   CREATE NEW PRODUCT ==========================
 describe("POST /api/prodcuts", () => {
   let token;
   beforeEach(async () => {
@@ -308,7 +308,7 @@ describe("POST /api/prodcuts", () => {
   });
 });
 
-// ===================== AUDIT STOK PRODUCT ========================
+// // ===================== AUDIT STOK PRODUCT ========================
 
 describe("GET /api/audit-stock", () => {
   let token;

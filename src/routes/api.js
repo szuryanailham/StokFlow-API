@@ -11,7 +11,7 @@ userRouter.use(authMiddleware);
 userRouter.get("/api/products", productController.getAllProducts);
 userRouter.get("/api/products/:id", productController.getDetailProductById);
 userRouter.post("/api/products", productController.createNewProduct);
-userRouter.delete("/api/products/:id", productController.deleteProduct);
+userRouter.delete("/api/products/:id", productController.deleteProductController);
 userRouter.put("/api/products/:id", productController.updateProduct);
 userRouter.get("/api/audit-stock", productController.auditStockHandler);
 

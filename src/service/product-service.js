@@ -5,6 +5,7 @@ import { validate } from "../validation/validation.js";
 
 const getAllProducts = async ({ limit, offset }) => {
   return prisma.product.findMany({
+    where: { isActive: true },
     skip: offset,
     take: limit,
   });
@@ -61,13 +62,16 @@ const deleteProductById = async (id) => {
     throw new ResponseError(404, "Product not found");
   }
 
-  const deletedProduct = await prisma.product.delete({
+  const softDeletedProduct = await prisma.product.update({
     where: {
       id: parseInt(id),
     },
+    data: {
+      isActive: false,
+    },
   });
 
-  return deletedProduct;
+  return softDeletedProduct;
 };
 
 const updateProductById = async (id, request) => {

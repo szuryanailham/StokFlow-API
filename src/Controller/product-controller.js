@@ -55,19 +55,22 @@ const createNewProduct = async (req, res, next) => {
   }
 };
 
-// DELETE Product
-const deleteProduct = async (req, res, next) => {
+// SOFT DELETE Product
+export const deleteProductController = async (req, res) => {
   try {
-    const id = req.params.id;
-    const result = await productService.deleteProductById(id);
+    const { id } = req.params;
+    const deletedProduct = await productService.deleteProductById(id);
     res.status(200).json({
-      message: "Product deleted successfully",
-      data: {
-        product: result,
-      },
+      message: "Product deleted successfully (soft delete)",
+      data: deletedProduct,
     });
   } catch (err) {
-    next(err);
+    if (err instanceof ResponseError) {
+      res.status(err.status).json({ errors: err.message });
+    } else {
+      console.error(err);
+      res.status(500).json({ errors: "Internal server error" });
+    }
   }
 };
 
@@ -110,7 +113,7 @@ export const auditStockHandler = async (req, res, next) => {
 };
 
 export default {
-  deleteProduct,
+  deleteProductController,
   getAllProducts,
   getDetailProductById,
   auditStockHandler,

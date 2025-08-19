@@ -1,0 +1,46 @@
+version: "3.9"
+
+services:
+  api:
+    build: .
+    container_name: stokflow_api
+    restart: always
+    ports:
+      - "3000:3000"
+    env_file: .env
+    depends_on:
+      - mysql
+    deploy:
+      resources:
+        limits:
+          memory: 512M   # limit memory container API
+          cpus: "0.50"  # max 50% CPU
+    networks:
+      - stokflow-net
+
+  mysql:
+    image: mysql:8.0
+    container_name: stokflow_mysql
+    restart: always
+    ports:
+      - "3306:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpassword
+      MYSQL_DATABASE: stokflowdb
+      MYSQL_USER: stokflowuser
+      MYSQL_PASSWORD: stokflowpass
+    volumes:
+      - mysql_data:/var/lib/mysql
+    deploy:
+      resources:
+        limits:
+          memory: 512M
+          cpus: "0.50"
+    networks:
+      - stokflow-net
+
+networks:
+  stokflow-net:
+
+volumes:
+  mysql_data:
