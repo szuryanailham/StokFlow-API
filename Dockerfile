@@ -1,23 +1,26 @@
-# Gunakan Node.js versi 18 LTS
-FROM node:18-alpine
+# Gunakan base image Node
+FROM node:20
 
 # Set working directory
 WORKDIR /app
 
-# Copy package.json dan package-lock.json
+# Copy package.json dan package-lock.json dulu (agar caching lebih efisien)
 COPY package*.json ./
 
 # Install dependencies
 RUN npm install
 
-# Copy semua source code
+# Copy semua file project
 COPY . .
 
-# Generate Prisma Client
+# Pastikan prisma binary bisa dieksekusi
+RUN chmod +x node_modules/.bin/prisma
+
+# Jalankan prisma generate setelah install
 RUN npx prisma generate
 
-# Expose port
+# Expose port (opsional, misal pakai Express)
 EXPOSE 3000
 
-# Jalankan migrate + seed sebelum start server
-CMD npx prisma migrate deploy && npx prisma db seed && npm start
+# Start app
+CMD ["npm", "run", "start"]
