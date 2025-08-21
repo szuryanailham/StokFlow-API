@@ -25,8 +25,7 @@ const getAllTransactions = async (req, res, next) => {
 const createNewTransactions = async (req, res, next) => {
   try {
     const request = req.body;
-    const result = await transactionService.createNewTransactions(request);
-
+    const result = await transactionService.createNewTransaction(request);
     res.status(201).json({
       message: "New Transaction created successfully",
       data: {

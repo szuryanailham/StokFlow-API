@@ -28,8 +28,26 @@ const getLowStockAlerts = async () => {
   });
 };
 
+export const createStockMovements = async ({ transactionItem, productId, quantity, userId, transacationId }) => {
+  // TODO: hitung stockAfterMovement terakhir jika perlu
+  const stockAfterMovement = 0;
+
+  return await prisma.stockMovement.create({
+    data: {
+      productId,
+      movementType: "OUT", // default untuk transaksi penjualan
+      quantityChanged: quantity,
+      stockAfterMovement,
+      reason: `Transaction #${transactionItem.transactionId}`, // pakai transactionItem untuk referensi
+      transactionItemId: transactionItem.id,
+      userId,
+    },
+  });
+};
+
 export default {
   getAllStockMovement,
   getLowStockAlerts,
   getStokMovementByProduct,
+  createStockMovements,
 };

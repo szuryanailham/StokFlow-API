@@ -49,7 +49,7 @@ model Transaction {
   id               Int               @id @default(autoincrement())
   transactionCode  String            @unique @map("transaction_code")
   transactionType  TransactionType
-  totalAmount      Decimal           @map("total_amount")
+  totalAmount Decimal @default(0) @map("total_amount")
   transactionDate  DateTime          @default(now()) @map("transaction_date")
   buyerSellerName  String?           @map("buyer_seller_name")
   notes            String?

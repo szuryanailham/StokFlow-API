@@ -7,7 +7,6 @@ const transactionValidated = Joi.object({
   transactionType: Joi.string()
     .valid(...transactionTypeEnum)
     .required(),
-  totalAmount: Joi.number().precision(2).required(),
   transactionDate: Joi.date().optional(),
   buyerSellerName: Joi.string().max(255).optional().allow(null, ""),
   notes: Joi.string().optional().allow(null, ""),

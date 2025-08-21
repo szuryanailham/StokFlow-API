@@ -19,20 +19,37 @@ const getTransactionItemsByTransactionId = async (id) => {
   return itemTransactions;
 };
 
-const postTransactionItems = async (transactionId, request) => {
+// export const postTransactionItems = async (transactionId, request) => {
+//   const transactionItems = validate(transactionItemSchema, request);
+//   const itemsWithTransactionId = transactionItems.map((item) => ({
+//     ...item,
+//     transactionId,
+//   }));
+//   const createdItemsTransaction = await prisma.transactionItem.createMany({
+//     data: itemsWithTransactionId,
+//     skipDuplicates: true,
+//   });
+//   return itemsWithTransactionId;
+// };
+
+export const postTransactionItems = async (transactionId, request) => {
   const transactionItems = validate(transactionItemSchema, request);
+  const createdItems = [];
+  console.log(transactionId);
+  for (const item of transactionItems) {
+    const createdItem = await prisma.transactionItem.create({
+      data: {
+        transactionId,
+        productId: item.productId,
+        quantity: item.quantity,
+        unitPriceAtTransaction: item.unitPriceAtTransaction,
+        subtotal: item.subtotal ?? item.unitPriceAtTransaction * item.quantity,
+      },
+    });
+    createdItems.push(createdItem);
+  }
 
-  const itemsWithTransactionId = transactionItems.map((item) => ({
-    ...item,
-    transactionId,
-  }));
-
-  const createdItemsTransaction = await prisma.transactionItem.createMany({
-    data: itemsWithTransactionId,
-    skipDuplicates: true,
-  });
-
-  return createdItemsTransaction;
+  return createdItems;
 };
 
 const updateTransactionItems = async (transactionId, transactionItemId, request) => {
