@@ -34,7 +34,7 @@ model Product {
   sku                String           @unique
   productName        String           @map("product_name")
   description        String?
-  isActive               Boolean          @default(true)
+  isActive           Boolean          @default(true)
   purchasePrice      Decimal          @default(0) @map("purchase_price")
   sellingPrice       Decimal          @default(0) @map("selling_price")
   currentStockQty    Int              @default(0) @map("current_stock_qty")

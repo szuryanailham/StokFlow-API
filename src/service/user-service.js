@@ -42,6 +42,23 @@ const login = async (request) => {
   };
 };
 
+const getUserWithRole = async (userId) => {
+  const user = await prisma.user.findUnique({
+    where: { id: Number(userId) },
+    include: { role: true }, // pastikan relasi di schema Prisma bernama userRole
+  });
+
+  if (!user) throw new Error("User not found");
+
+  return {
+    id: user.id,
+    name: user.username,
+    email: user.email,
+    role: user.role.roleName,
+  };
+};
+
 export default {
   login,
+  getUserWithRole,
 };

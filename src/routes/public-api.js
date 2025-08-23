@@ -8,4 +8,5 @@ publicRouter.get("/", (req, res) => {
 });
 
 publicRouter.post("/api/users/login", userController.login);
+
 export { publicRouter };

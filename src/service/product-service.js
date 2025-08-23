@@ -51,10 +51,11 @@ const PostNewProduct = async (request) => {
   return createdProduct;
 };
 
-const deleteProductById = async (id) => {
+const softDeleteProductById = async (id) => {
+  const numericId = Number(id);
   const existingProduct = await prisma.product.findUnique({
     where: {
-      id: parseInt(id),
+      id: numericId,
     },
   });
 
@@ -158,6 +159,6 @@ export default {
   getLowStockAlerts,
   getDetailProductById,
   getAuditStock,
-  deleteProductById,
+  softDeleteProductById,
   PostNewProduct,
 };

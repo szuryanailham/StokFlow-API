@@ -1,3 +1,4 @@
+import { ResponseError } from "../error/response-error.js";
 import productService from "../service/product-service.js";
 const getAllProducts = async (req, res, next) => {
   try {
@@ -56,21 +57,22 @@ const createNewProduct = async (req, res, next) => {
 };
 
 // SOFT DELETE Product
-export const deleteProductController = async (req, res) => {
+
+const softDeleteProductController = async (req, res) => {
   try {
     const { id } = req.params;
-    const deletedProduct = await productService.deleteProductById(id);
+    const deletedProduct = await productService.softDeleteProductById(id);
+
     res.status(200).json({
       message: "Product deleted successfully (soft delete)",
       data: deletedProduct,
     });
   } catch (err) {
     if (err instanceof ResponseError) {
-      res.status(err.status).json({ errors: err.message });
-    } else {
-      console.error(err);
-      res.status(500).json({ errors: "Internal server error" });
+      return res.status(err.status).json({ errors: err.message });
     }
+    console.error("Unexpected error:", err);
+    res.status(500).json({ errors: "Internal server error" });
   }
 };
 
@@ -113,7 +115,7 @@ export const auditStockHandler = async (req, res, next) => {
 };
 
 export default {
-  deleteProductController,
+  softDeleteProductController,
   getAllProducts,
   getDetailProductById,
   auditStockHandler,

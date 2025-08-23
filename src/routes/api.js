@@ -4,14 +4,17 @@ import { authMiddleware } from "../middleware/auth-middleware.js";
 import transctionController from "../Controller/transaction-controller.js";
 import transactionItemController from "../Controller/transactionItem-controller.js";
 import stockmovementController from "../Controller/stockmovement-controller.js";
+import userController from "../Controller/user-controller.js";
 
 const userRouter = express.Router();
 userRouter.use(authMiddleware);
+
+userRouter.get("/auth/me", userController.getMe);
 // product endpoint
 userRouter.get("/api/products", productController.getAllProducts);
 userRouter.get("/api/products/:id", productController.getDetailProductById);
 userRouter.post("/api/products", productController.createNewProduct);
-userRouter.delete("/api/products/:id", productController.deleteProductController);
+userRouter.patch("/api/products/:id/soft-delete", productController.softDeleteProductController);
 userRouter.put("/api/products/:id", productController.updateProduct);
 userRouter.get("/api/audit-stock", productController.auditStockHandler);
 
