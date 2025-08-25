@@ -4,11 +4,17 @@ import { createProductValidation } from "../validation/product-validation.js";
 import { validate } from "../validation/validation.js";
 
 const getAllProducts = async ({ limit, offset }) => {
-  return prisma.product.findMany({
+  const countProduct = await prisma.product.count({
+    where: { isActive: true },
+  });
+
+  const products = await prisma.product.findMany({
     where: { isActive: true },
     skip: offset,
     take: limit,
   });
+
+  return { products, total: countProduct };
 };
 
 const getDetailProductById = async (id) => {
