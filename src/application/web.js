@@ -6,7 +6,7 @@ import { userRouter } from "../routes/api.js";
 
 export const web = express();
 
-const allowedOrigins = ["http://localhost:3000", "http://localhost:3001", "https://www.frontenddomain.com"];
+const allowedOrigins = ["http://localhost:3000", "http://localhost:3001", "https://stokflow-frontend.vercel.app"];
 
 const corsOptions = {
   origin: function (origin, callback) {
