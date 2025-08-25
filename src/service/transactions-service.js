@@ -1,16 +1,32 @@
 import { prisma } from "../application/database.js";
 import { transactionValidated, updateTransactionValidated } from "../validation/transaction-validation.js";
 import { validate } from "../validation/validation.js";
-import transactionItemService from "./transactionItem-service.js";
-import stockMovementService from "./stockmovement-service.js";
 import { ResponseError } from "../error/response-error.js";
 
 //  ======== Get all transactions with pagination (limit & offset) ===========
 const getAllTransactions = async ({ limit, offset }) => {
-  return prisma.transaction.findMany({
+  // Total transactions
+  const totalTransactions = await prisma.transaction.count();
+
+  // Total revenue (jumlahkan totalAmount)
+  const totalRevenueResult = await prisma.transaction.aggregate({
+    _sum: {
+      totalAmount: true,
+    },
+  });
+  const totalRevenue = totalRevenueResult._sum.totalAmount ?? 0;
+
+  // Data transaksi dengan pagination
+  const transactions = await prisma.transaction.findMany({
     skip: offset,
     take: limit,
   });
+
+  return {
+    totalTransactions,
+    totalRevenue,
+    transactions,
+  };
 };
 
 //  =========== Create a new transaction ===========
