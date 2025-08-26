@@ -31,16 +31,37 @@ GET /api/products?page=1&limit=10
 
 ```json
 {
-  "message": "Get all products success",
+  "success": true,
   "data": {
     "products": [
       {
-        "id": 1,
-        "sku": "SKU001",
-        "productName": "Product A",
-        ...
+        "id": 14,
+        "sku": "duplikatSKU",
+        "productName": "Produk A",
+        "description": null,
+        "isActive": true,
+        "purchasePrice": 10000,
+        "sellingPrice": 12000,
+        "currentStockQty": 20,
+        "minStockThreshold": 5,
+        "createdAt": "2025-08-13T16:51:04.404Z",
+        "updatedAt": "2025-08-13T16:51:04.404Z"
+      },
+      {
+        "id": 24,
+        "sku": "test12346",
+        "productName": "Test Product",
+        "description": "This is a test product",
+        "isActive": true,
+        "purchasePrice": 10000,
+        "sellingPrice": 12000,
+        "currentStockQty": 20,
+        "minStockThreshold": 5,
+        "createdAt": "2025-08-25T05:48:17.716Z",
+        "updatedAt": "2025-08-25T05:48:17.716Z"
       }
     ],
+    "total": 2,
     "pagination": {
       "page": 1,
       "limit": 10

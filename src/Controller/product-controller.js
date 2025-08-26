@@ -1,17 +1,23 @@
 import { ResponseError } from "../error/response-error.js";
 import productService from "../service/product-service.js";
+
 const getAllProducts = async (req, res, next) => {
   try {
     const page = Math.max(parseInt(req.query.page) || 1, 1);
     const limit = Math.max(parseInt(req.query.limit) || 10, 1);
     const offset = (page - 1) * limit;
 
-    const products = await productService.getAllProducts({ page, limit, offset });
+    const { products, total } = await productService.getAllProducts({
+      page,
+      limit,
+      offset,
+    });
 
     res.status(200).json({
-      message: "Get all products success",
+      success: true,
       data: {
         products,
+        total,
         pagination: {
           page,
           limit,
