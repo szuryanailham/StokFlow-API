@@ -15,11 +15,13 @@ const getAllProducts = async (req, res, next) => {
 
     res.status(200).json({
       success: true,
-      products,
-      total,
-      pagination: {
-        page,
-        limit,
+      data: {
+        products,
+        total,
+        pagination: {
+          limit,
+          offset,
+        },
       },
     });
   } catch (err) {
