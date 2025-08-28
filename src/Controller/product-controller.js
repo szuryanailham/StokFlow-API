@@ -34,11 +34,22 @@ const getDetailProductById = async (req, res, next) => {
   try {
     const id = req.params.id;
     const detailProduct = await productService.getDetailProductById(id);
+
+    if (!detailProduct) {
+      return res.status(404).json({
+        message: "Product not found",
+      });
+    }
+
+    const productResponse = {
+      ...detailProduct,
+      purchasePrice: Number(detailProduct.purchasePrice),
+      sellingPrice: Number(detailProduct.sellingPrice),
+    };
+
     res.status(200).json({
-      message: "Get product detail success",
-      data: {
-        product: detailProduct,
-      },
+      message: "Product detail fetched successfully",
+      data: productResponse,
     });
   } catch (err) {
     next(err);
