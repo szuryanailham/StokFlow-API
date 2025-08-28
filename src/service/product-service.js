@@ -2,6 +2,10 @@ import { prisma } from "../application/database.js";
 import { ResponseError } from "../error/response-error.js";
 import { createProductValidation } from "../validation/product-validation.js";
 import { validate } from "../validation/validation.js";
+import { v4 as uuidv4 } from "uuid";
+function generateSKU() {
+  return `PRD-${uuidv4().split("-")[0].toUpperCase()}`;
+}
 
 const getAllProducts = async ({ limit, offset }) => {
   const countProduct = await prisma.product.count({
@@ -32,15 +36,15 @@ const getDetailProductById = async (id) => {
 
 const PostNewProduct = async (request) => {
   const product = validate(createProductValidation, request);
-  const existingProduct = await prisma.product.findUnique({
-    where: { sku: product.sku },
-  });
-  if (existingProduct) {
-    throw new ResponseError(409, "Product with this SKU already exists");
-  }
+
+  // generate SKU otomatis
+  const sku = generateSKU();
 
   const createdProduct = await prisma.product.create({
-    data: product,
+    data: {
+      ...product,
+      sku,
+    },
     select: {
       id: true,
       sku: true,
@@ -54,6 +58,7 @@ const PostNewProduct = async (request) => {
       updatedAt: true,
     },
   });
+
   return createdProduct;
 };
 
